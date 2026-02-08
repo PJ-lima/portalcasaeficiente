@@ -46,3 +46,14 @@ prisma/*.db-journal
 # IDE
 .idea/
 .vscode/
+
+# Local planning/docs (do not version)
+walkthrough.md
+proximospassos.txt
+PROBLEMAS_DOSSIER_RESOLVIDOS.md
+nextsteps.txt
+implementation_plan.md
+FASE1_TESTES.md
+FASE2_TESTES.md
+FASE3_TESTES.md
+FASE3_RESULTADOS.md
