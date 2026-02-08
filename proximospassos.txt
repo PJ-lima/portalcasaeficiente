@@ -1,0 +1,235 @@
+
+
+## 🧭 Regra de ouro do roadmap
+
+**Primeiro garantimos o “pipeline mínimo confiável”**: ingestão → dedup → persistência → observabilidade → deploy.
+Só depois: escala (mais concelhos), automação, notificações, dashboard “bonito”.
+
+---
+
+## ✅ Fase 2 — UserSavedProgram (favoritos)
+
+**Objetivo:** o utilizador guarda apoios e volta depois. Isso aumenta retenção e valida o produto *mesmo antes do scraping ficar perfeito*.
+
+### Entregáveis
+
+* **Tabela/modelo** `UserSavedProgram` (userId, programId, createdAt)
+* API:
+
+  * `POST /api/saved-programs` (guardar)
+  * `DELETE /api/saved-programs/:id` (remover)
+  * `GET /api/saved-programs` (listar do user)
+* UI:
+
+  * Botão “Guardar” no detalhe/lista
+  * Página `/conta/favoritos` (ou dentro do `/conta/dossier`)
+
+### Dependências
+
+* NextAuth funcional e RLS/policies no Supabase (ou equivalente via Prisma + server-side auth).
+
+---
+
+## ⚙️ Fase 3 — Workers/Scrapers (ingestão real)
+
+**Objetivo:** sair de mock data e ter 1 pipeline real (Cascais + Fundo Ambiental), com dedup e logs.
+
+### 3.1. Definir “contrato de dados” (antes do scraping)
+
+Isto evita refactors dolorosos.
+
+* **Programa** (mínimo):
+
+  * `source` (ex: `municipality:cascais`, `national:fundo-ambiental`)
+  * `title`, `description`, `url`
+  * `municipalityId` (ou null para nacional)
+  * `eligibilityTags` (opcional já)
+  * `startsAt`, `endsAt` (quando existir)
+  * `contentHash` ✅
+  * `slug` (derivado e estável)
+  * `rawHtml`/`rawText` (opcional mas ajuda para debug e reprocess)
+
+### 3.2. Dedup por `contentHash` (como fazer sem dramas)
+
+* Canonicaliza conteúdo antes do hash:
+
+  * remover espaços repetidos, scripts, ids randómicos, timestamps óbvios
+* `contentHash = sha256(canonicalText + canonicalUrl + source)`
+* Política:
+
+  * se `contentHash` já existe → skip update
+  * se `slug` existe mas hash mudou → criar “nova versão” **ou** atualizar e guardar `updatedAt` + histórico (decide já)
+
+### 3.3. Scraper Cascais (piloto municipal)
+
+**Entregáveis**
+
+* `workers/cascais.ts` (ou `src/workers/...`)
+* Seletores reais (CSS/DOM)
+* Normalização + mapping para o teu modelo
+* **Retry + rate limit**
+
+  * retry com backoff exponencial (ex: 3 tentativas)
+  * rate limit (ex: 1 req/seg) para não virar vilão
+
+### 3.4. Worker Fundo Ambiental (piloto nacional)
+
+Mesmo pipeline, outra fonte.
+
+### 3.5. Logs estruturados
+
+**Sem logs bons, scraping é sofrimento.**
+Formato recomendado (JSON):
+
+* `runId`, `source`, `step`, `url`, `status`, `durationMs`, `itemsFound`, `itemsInserted`, `itemsUpdated`, `itemsSkipped`, `error`
+
+Persistência:
+
+* tabela `ingestion_runs`
+* tabela `ingestion_events` (opcional) ou só `runs` + `error_blob`
+
+---
+
+## 🚀 Fase 4 — Deploy Staging (Vercel + Supabase)
+
+**Objetivo:** staging “real”, com pipeline a correr, e checks mínimos.
+
+### 4.1. Setup de ambientes
+
+* Vercel env vars: DB URL, NextAuth secret, providers, etc.
+* Supabase: RLS policies para dados do user
+* Separar `staging` vs `prod` (projetos Supabase diferentes, idealmente)
+
+### 4.2. Execução dos workers
+
+Escolhe 1 (não faças as duas coisas ao mesmo tempo):
+
+**Opção A — Vercel Cron (bom para MVP)**
+
+* Endpoint protegido tipo `POST /api/ingest/run` com secret header
+* Cron diário (ou 2x/dia)
+
+**Opção B — GitHub Actions (mais previsível/observável)**
+
+* Corre um script Node que chama o pipeline
+* Logs ficam no Actions + podes notificar falhas
+
+👉 Eu faria: **Vercel Cron no início**, GitHub Actions quando a coisa estiver sensível/complexa.
+
+### 4.3. Testes E2E básicos
+
+Só o mínimo que evita regressões idiotas:
+
+* login
+* listar apoios
+* abrir detalhe
+* guardar favorito
+* ver favoritos
+
+---
+
+## 🔔 Notificações de novos programas
+
+**Objetivo:** quando entra algo novo, alertar utilizadores (por concelho + perfil).
+
+### Passos
+
+1. **Regra de deteção “novo”**
+
+   * novo `programId` inserido **ou** hash mudou (se decides “update” como novidade)
+2. **Preferências do utilizador**
+
+   * `user_notification_settings`: concelhos seguidos + tags (opcional)
+3. **Fila de notificações**
+
+   * tabela `notification_queue` com status (`pending/sent/failed`)
+4. **Email provider** (Brevo, Resend, etc.)
+5. **Batch sender** (cron separado)
+
+---
+
+## 📊 Dashboard de monitorização
+
+**Objetivo:** veres ingestão e falhas sem SSH + grep.
+
+### MVP do dashboard (não inventar BI)
+
+* Página admin protegida:
+
+  * últimos `ingestion_runs`
+  * success rate
+  * top errors (agrupados)
+  * “items inserted/updated/skipped” por source
+
+Depois, se fizer sentido:
+
+* gráfico de ingestão por dia
+* alertas (email/discord) quando falha
+
+---
+
+## 🗺️ Expandir para mais concelhos (Sintra, Oeiras, Lisboa…)
+
+Isto só escala bem se definires uma **arquitetura de “adapters”**:
+
+* `sources/municipality/<name>.ts`
+
+  * `discoverUrls()`
+  * `parseListPage()`
+  * `parseDetailPage()`
+* tudo despeja no mesmo `normalizeProgram()` → `upsertProgram()`
+
+**Ordem sugerida**
+
+1. Oeiras (normalmente sites mais organizados)
+2. Sintra
+3. Lisboa (tende a ser mais “enterprise chaos”)
+
+---
+
+## 🧱 Roadmap por sprints (prático)
+
+### Sprint 1 (fundação)
+
+* UserSavedProgram (API + UI)
+* `ingestion_runs` + logs estruturados
+* pipeline `upsert + contentHash`
+
+### Sprint 2 (primeiro scraping real)
+
+* Worker Fundo Ambiental
+* Worker Cascais
+* dedup a funcionar e métricas básicas
+
+### Sprint 3 (staging + automação)
+
+* Vercel staging + Supabase staging
+* Cron (Vercel ou GH Actions)
+* E2E mínimo
+
+### Sprint 4 (retention loop)
+
+* notificações (settings + queue + batch sender)
+* dashboard admin v1
+
+### Sprint 5 (escala)
+
+* 2–3 concelhos novos com adapters
+* hardening (rate limit, retries, alertas)
+
+---
+
+## 👊 Decisão técnica que te poupa semanas
+
+Define já se vais tratar mudanças como:
+
+* **Update in-place** (mais simples, perde histórico)
+* **Versionado** (mais complexo, mas perfeito para “novo apoio/alteração”)
+
+Para notificações, **versionado** é ouro. Para MVP rápido, **update in-place** chega.
+
+workers
+Tabela ponto de situação das candidaturas a beneficiários aos apoios (consultar tabelas se existirem)
+ex: https://www.fundoambiental.pt/plataforma-vales-de-eficiencia/beneficiarios-situacao-das-candidaturas.aspx
+ex: https://www.fundoambiental.pt/plataforma-vales-de-eficiencia/situacao-das-candidaturas.aspx
+ex: https://www.fundoambiental.pt/plataforma-vales-de-eficiencia/candidaturas-a-medidas-situacao-das-candidaturas.aspx

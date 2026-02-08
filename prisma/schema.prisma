@@ -1,0 +1,259 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [uuid_ossp(map: "uuid-ossp", schema: "extensions")]
+}
+
+model User {
+  id            String             @id @default(cuid()) @map("id")
+  name          String?            @map("name")
+  email         String?            @unique @map("email")
+  emailVerified DateTime?          @map("email_verified")
+  image         String?            @map("image")
+  nif           String?            @map("nif")
+  passwordHash  String?            @map("password_hash")
+  role          String             @default("user") @map("role")
+  accounts      Account[]          @relation("user_accounts")
+  sessions      Session[]          @relation("user_sessions")
+  dossier       UserDossier?       @relation("user_dossier")
+  savedPrograms UserSavedProgram[] @relation("user_saved_programs")
+
+  @@index([nif])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid()) @map("id")
+  userId            String  @map("user_id")
+  type              String  @map("type")
+  provider          String  @map("provider")
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @map("refresh_token")
+  access_token      String? @map("access_token")
+  expires_at        Int?    @map("expires_at")
+  token_type        String? @map("token_type")
+  scope             String? @map("scope")
+  id_token          String? @map("id_token")
+  session_state     String? @map("session_state")
+  user              User    @relation("user_accounts", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid()) @map("id")
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime @map("expires")
+  user         User     @relation("user_sessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String   @map("identifier")
+  token      String   @map("token")
+  expires    DateTime @map("expires")
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Program {
+  id           String             @id @default(cuid()) @map("id")
+  slug         String             @unique @map("slug")
+  title        String             @map("title")
+  entity       String?            @map("entity")
+  programType  ProgramType        @map("program_type")
+  status       ProgramStatus      @map("status")
+  summary      String?            @map("summary")
+  officialUrl  String?            @map("official_url")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+  geographies  ProgramGeography[] @relation("program_geographies")
+  versions     ProgramVersion[]   @relation("program_versions")
+  sources      Source[]           @relation("program_sources")
+  savedByUsers UserSavedProgram[] @relation("saved_programs")
+
+  @@index([slug])
+  @@index([status])
+  @@index([programType])
+  @@map("programs")
+}
+
+model ProgramVersion {
+  id          String   @id @default(cuid()) @map("id")
+  programId   String   @map("program_id")
+  versionDate DateTime @map("version_date")
+  rawText     String   @map("raw_text")
+  rulesJson   Json     @map("rules_json")
+  createdAt   DateTime @default(now()) @map("created_at")
+  program     Program  @relation("program_versions", fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([programId])
+  @@map("program_versions")
+}
+
+model Source {
+  id          String     @id @default(cuid()) @map("id")
+  programId   String?    @map("program_id")
+  sourceType  SourceType @map("source_type")
+  sourceUrl   String?    @map("source_url")
+  fetchedAt   DateTime?  @map("fetched_at")
+  contentHash String?    @map("content_hash")
+  rawPayload  Json?      @map("raw_payload")
+  program     Program?   @relation("program_sources", fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([fetchedAt])
+  @@index([programId])
+  @@map("sources")
+}
+
+model ProgramGeography {
+  id           String   @id @default(cuid()) @map("id")
+  programId    String   @map("program_id")
+  level        GeoLevel @map("level")
+  district     String?  @map("district")
+  municipality String?  @map("municipality")
+  parish       String?  @map("parish")
+  program      Program  @relation("program_geographies", fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([municipality])
+  @@index([programId])
+  @@index([level])
+  @@map("program_geographies")
+}
+
+model Distrito {
+  id        String     @id @map("id")
+  name      String     @unique @map("name")
+  concelhos Concelho[]
+
+  @@map("distritos")
+}
+
+model Concelho {
+  id         String   @id @map("id")
+  name       String   @unique @map("name")
+  distritoId String   @map("distrito_id")
+  distrito   Distrito @relation(fields: [distritoId], references: [id])
+
+  @@index([distritoId])
+  @@map("concelhos")
+}
+
+model UserDossier {
+  id                String           @id @default(cuid()) @map("id")
+  userId            String           @unique @map("user_id")
+  address           String?          @map("address")
+  postalCode        String?          @map("postal_code")
+  concelhoId        String?          @map("concelho_id")
+  isMainResidence   Boolean?         @map("is_main_residence")
+  buildingYear      Int?             @map("building_year")
+  propertyType      String?          @map("property_type")
+  householdSize     Int?             @map("household_size")
+  annualIncome      Decimal?         @map("annual_income") @db.Decimal(12, 2)
+  hasSocialTariff   Boolean?         @map("has_social_tariff")
+  isDisabledPerson  Boolean?         @map("is_disabled_person")
+  hasElderly        Boolean?         @map("has_elderly")
+  energyCertificate String?          @map("energy_certificate")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  postalCacheId     String?          @map("postal_cache_id")
+  postalValidated   Boolean          @default(false) @map("postal_validated")
+  postalValidatedAt DateTime?        @map("postal_validated_at")
+  postalCache       PostalCodeCache? @relation("postal_cache_dossiers", fields: [postalCacheId], references: [id])
+  user              User             @relation("user_dossier", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([concelhoId])
+  @@index([postalCacheId])
+  @@map("user_dossiers")
+}
+
+model UserSavedProgram {
+  id        String   @id @default(cuid()) @map("id")
+  userId    String   @map("user_id")
+  programId String   @map("program_id")
+  notes     String?  @map("notes")
+  savedAt   DateTime @default(now()) @map("saved_at")
+  program   Program  @relation("saved_programs", fields: [programId], references: [id], onDelete: Cascade)
+  user      User     @relation("user_saved_programs", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, programId])
+  @@index([userId])
+  @@index([programId])
+  @@map("user_saved_programs")
+}
+
+model PostalCodeCache {
+  id         String        @id @default(cuid()) @map("id")
+  postalCode String        @unique @map("postal_code") @db.VarChar(8)
+  distrito   String?       @map("distrito") @db.VarChar(80)
+  concelho   String?       @map("concelho") @db.VarChar(120)
+  localidade String?       @map("localidade") @db.VarChar(120)
+  source     String        @default("geoapi") @map("source") @db.VarChar(32)
+  raw        Json?         @map("raw")
+  fetchedAt  DateTime      @default(now()) @map("fetched_at")
+  expiresAt  DateTime      @map("expires_at")
+  hitCount   Int           @default(0) @map("hit_count")
+  lastHitAt  DateTime?     @map("last_hit_at")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+  dossiers   UserDossier[] @relation("postal_cache_dossiers")
+
+  @@index([expiresAt])
+  @@index([concelho])
+  @@map("postal_code_cache")
+}
+
+enum ProgramStatus {
+  OPEN
+  CLOSED
+  PLANNED
+  UNKNOWN
+}
+
+enum ProgramType {
+  NATIONAL
+  MUNICIPAL
+}
+
+enum SourceType {
+  DR
+  FA
+  MUNICIPAL_SITE
+  OTHER
+}
+
+enum GeoLevel {
+  NATIONAL
+  DISTRICT
+  MUNICIPALITY
+  PARISH
+}
+
+model IngestionRun {
+  id            String    @id @default(cuid()) @map("id")
+  source        String    @map("source")
+  status        String    @map("status")
+  startedAt     DateTime  @default(now()) @map("started_at")
+  finishedAt    DateTime? @map("finished_at")
+  itemsFound    Int       @default(0) @map("items_found")
+  itemsInserted Int       @default(0) @map("items_inserted")
+  itemsUpdated  Int       @default(0) @map("items_updated")
+  itemsSkipped  Int       @default(0) @map("items_skipped")
+  errors        Json?     @map("errors")
+  durationMs    Int?      @map("duration_ms")
+
+  @@index([source])
+  @@index([status])
+  @@index([startedAt])
+  @@map("ingestion_runs")
+}

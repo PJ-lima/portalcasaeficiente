@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Header e logo reutilizáveis */
+  .site-header {
+    @apply h-20 sm:h-24;
+  }
+
+  .site-logo {
+    @apply rounded-lg object-contain w-12 h-12 sm:w-16 sm:h-16;
+  }
+
+  .site-nav-link {
+    @apply text-base font-medium text-gray-700 hover:text-primary transition;
+  }
+
+  .site-auth-btn {
+    @apply inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition hover:bg-gray-50;
+  }
+
+  .site-menu-btn {
+    @apply md:hidden inline-flex items-center justify-center rounded-lg p-3 text-gray-500 hover:bg-gray-100;
+  }
+
+  /* Estilos do autocomplete */
+  .autocomplete-menu {
+    @apply absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm;
+  }
+
+  .autocomplete-option {
+    @apply relative cursor-pointer select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-primary/5;
+  }
+
+  .autocomplete-option-selected {
+    @apply bg-primary/10 font-medium;
+  }
+}
+
+/* Animações suaves */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
