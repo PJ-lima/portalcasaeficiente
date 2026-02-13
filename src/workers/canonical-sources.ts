@@ -306,4 +306,5 @@ export const NATIONAL_SOURCE_IDS: CanonicalSourceId[] = [
   'balcao-dos-fundos',
   'portal-habitacao-ihru',
   'dgeg-apoios-energia',
+  'adene-casa-mais',
 ];
