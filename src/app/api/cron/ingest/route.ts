@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runIngestion } from '@/workers/registry';
+import { runIngestion, type IngestSourceId } from '@/workers/registry';
 
 /**
  * GET /api/cron/ingest
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   const source = searchParams.get('source') || 'all';
 
   try {
-    const results = await runIngestion(source as any);
+    const results = await runIngestion(source as IngestSourceId);
     
     // Calculate stats
     const stats = results.reduce((acc, r) => {

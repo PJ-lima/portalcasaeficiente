@@ -49,7 +49,7 @@ async function ingest() {
 
     // Cascais ID (hardcoded for pilot)
     // Em produção seria buscado via: await prisma.concelho.findFirst({ where: { name: 'Cascais' } })
-    const concelhoId = 'lisboa-cascais'; 
+    // const concelhoId = 'lisboa-cascais'; 
 
     await ingestionLogger.updateStats({ itemsFound: MOCK_PROGRAMS.length });
 

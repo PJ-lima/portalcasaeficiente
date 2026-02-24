@@ -55,7 +55,16 @@ const config: Config = {
         ring: "#1E3A8A",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: [
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif'
+        ],
       },
       borderRadius: {
         lg: "0.75rem",

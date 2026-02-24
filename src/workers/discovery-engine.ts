@@ -7,9 +7,9 @@ import type { CanonicalSourceDefinition } from './canonical-sources';
 import { calculateContentHash, normalizeText, WorkerLogger } from '../lib/worker-utils';
 import { 
   crawlPageForDetails, 
-  shouldBlockTitle, 
-  isRelevantToEnergyEfficiency,
-  type SupportProgramDetails,
+  // shouldBlockTitle, 
+  // isRelevantToEnergyEfficiency,
+  // type SupportProgramDetails,
   type SupportCategory 
 } from './deep-crawler';
 
