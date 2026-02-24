@@ -19,10 +19,10 @@ import { slugify } from '../lib/utils';
 import { calculateContentHash, WorkerLogger } from '../lib/worker-utils';
 import { 
   crawlPageForDetails, 
-  shouldBlockTitle,
+  // shouldBlockTitle,
   isRelevantToEnergyEfficiency,
-  detectSupportCategory,
-  type SupportProgramDetails,
+  // detectSupportCategory,
+  // type SupportProgramDetails,
   type SupportCategory,
 } from './deep-crawler';
 

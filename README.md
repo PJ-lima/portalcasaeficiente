@@ -2,6 +2,27 @@
 
 Estrutura inicial do projecto preparada para desenvolvimento.
 
+## 🚀 Quick Start
+
+Para configuração completa e detalhada, consulte: **[SETUP_TESTING.md](./SETUP_TESTING.md)**
+
+### Instalação Rápida
+
+```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Configurar ambiente
+cp .env.example .env
+# Editar .env com suas configurações
+
+# 3. Preparar base de dados
+npm run db:migrate:dev
+
+# 4. Iniciar servidor
+npm run dev
+```
+
 Tree alvo (exemplo):
 
 ```

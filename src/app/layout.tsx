@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import siteLogo from '../../assets/media/LogoSemFundo.png';
 import favicon from '../../assets/media/favicon.png';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Portal Casa Eficiente — Apoios à Habitação',
@@ -42,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-PT">
-      <body className={inter.className}>
+      <body className="font-sans">
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
             {children}

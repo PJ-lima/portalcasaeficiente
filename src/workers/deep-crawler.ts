@@ -14,7 +14,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import type { CheerioAPI } from 'cheerio';
-import type { AnyNode, Element as DomElement } from 'domhandler';
+import type { AnyNode } from 'domhandler';
 import { normalizeText, WorkerLogger } from '../lib/worker-utils';
 
 // ============================================================================
@@ -345,16 +345,16 @@ function extractSectionsFromPage($: CheerioAPI): ExtractedSection[] {
   const sections: ExtractedSection[] = [];
   
   // Look for common section containers
-  const sectionSelectors = [
-    'section',
-    '.section',
-    '.content-section',
-    '[class*="section"]',
-    'article',
-    '.tab-pane',
-    '.accordion-item',
-    '.card',
-  ];
+  // const sectionSelectors = [
+  //   'section',
+  //   '.section',
+  //   '.content-section',
+  //   '[class*="section"]',
+  //   'article',
+  //   '.tab-pane',
+  //   '.accordion-item',
+  //   '.card',
+  // ];
   
   // Also look for headings followed by content
   $('h1, h2, h3, h4, h5, h6, .title, [class*="title"], [class*="heading"]').each((_, heading) => {

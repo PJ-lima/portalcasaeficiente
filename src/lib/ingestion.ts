@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma';
-import { IngestionRun } from '@prisma/client';
 
 export type IngestionStats = {
   itemsFound: number;
