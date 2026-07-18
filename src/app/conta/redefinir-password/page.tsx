@@ -56,11 +56,11 @@ function RedefinirPasswordContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+    <main className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
-        <div className="bg-white shadow-lg rounded-2xl p-8">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Redefinir password</h1>
-          <p className="text-sm text-gray-600 mb-6">
+        <div className="border border-border bg-card shadow-card rounded-2xl p-8">
+          <h1 className="text-2xl font-semibold text-ink mb-2">Redefinir password</h1>
+          <p className="text-sm text-muted-foreground mb-6">
             Defina uma nova password para entrar novamente na sua conta.
           </p>
 
@@ -71,14 +71,14 @@ function RedefinirPasswordContent() {
           )}
 
           {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            <div className="mb-4 p-3 bg-success-50 border border-success-200 rounded-lg text-success-700 text-sm">
               {success}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-ink mb-1">
                 Nova password
               </label>
               <input
@@ -86,7 +86,7 @@ function RedefinirPasswordContent() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Minimo 8 caracteres"
                 minLength={8}
                 required
@@ -94,7 +94,7 @@ function RedefinirPasswordContent() {
             </div>
 
             <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-ink mb-1">
                 Confirmar nova password
               </label>
               <input
@@ -102,7 +102,7 @@ function RedefinirPasswordContent() {
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Repita a password"
                 minLength={8}
                 required
@@ -112,14 +112,14 @@ function RedefinirPasswordContent() {
             <button
               type="submit"
               disabled={isLoading || !token}
-              className="w-full py-3 px-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 px-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? 'A guardar...' : 'Guardar nova password'}
             </button>
           </form>
 
           <div className="mt-6 text-center space-y-2">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Nao recebeu o link?{' '}
               <Link href="/conta/recuperar-password" className="text-primary-600 hover:underline">
                 Pedir novo link

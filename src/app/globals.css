@@ -2,39 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-background text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-sun-200 text-ink;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  h1,
+  h2 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+}
+
 @layer components {
+  /* Etiqueta-seta do certificado energético — a assinatura visual do portal */
+  .label-tag {
+    clip-path: polygon(0 0, calc(100% - 0.55em) 0, 100% 50%, calc(100% - 0.55em) 100%, 0 100%);
+    padding-right: 0.9em;
+  }
+
+  /* Eyebrow de secção */
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary;
+  }
+
+  .section-eyebrow::before {
+    content: "";
+    @apply label-tag inline-block h-3 w-5 bg-sun;
+  }
+
   /* Header e logo reutilizáveis */
   .site-header {
-    @apply h-20 sm:h-24;
+    @apply h-16 sm:h-20;
   }
 
   .site-logo {
-    @apply rounded-lg object-contain w-12 h-12 sm:w-16 sm:h-16;
+    @apply rounded-lg object-contain w-10 h-10 sm:w-12 sm:h-12;
   }
 
   .site-nav-link {
-    @apply text-base font-medium text-gray-700 hover:text-primary transition;
+    @apply rounded-md px-3 py-2 text-[15px] font-medium text-muted-foreground transition hover:bg-primary-50 hover:text-primary;
   }
 
   .site-auth-btn {
-    @apply inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition hover:bg-gray-50;
+    @apply inline-flex items-center justify-center rounded-lg border border-input bg-card px-4 py-2 text-sm font-medium text-ink transition hover:border-primary-300 hover:bg-primary-50;
   }
 
   .site-menu-btn {
-    @apply md:hidden inline-flex items-center justify-center rounded-lg p-3 text-gray-500 hover:bg-gray-100;
+    @apply md:hidden inline-flex items-center justify-center rounded-lg p-2.5 text-muted-foreground transition hover:bg-muted;
+  }
+
+  /* Botões base */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-card transition hover:bg-primary-800 active:translate-y-px;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-input bg-card px-6 py-3 font-medium text-ink transition hover:border-primary-300 hover:bg-primary-50;
   }
 
   /* Estilos do autocomplete */
   .autocomplete-menu {
-    @apply absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm;
+    @apply absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-card py-1 text-base shadow-lg ring-1 ring-ink/5 focus:outline-none sm:text-sm;
   }
 
   .autocomplete-option {
-    @apply relative cursor-pointer select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-primary/5;
+    @apply relative cursor-pointer select-none py-2 pl-3 pr-9 text-ink hover:bg-primary-50;
   }
 
   .autocomplete-option-selected {
-    @apply bg-primary/10 font-medium;
+    @apply bg-primary-100 font-medium;
   }
 }
 
@@ -52,4 +97,34 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-riseIn {
+  animation: riseIn 0.5s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-riseIn {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

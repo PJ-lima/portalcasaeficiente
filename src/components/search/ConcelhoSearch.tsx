@@ -95,7 +95,7 @@ export function ConcelhoSearch() {
           onBlur={() => setTimeout(() => setIsOpen(false), 200)}
           onKeyDown={handleKeyDown}
           placeholder="Escreve o teu concelho (ex.: Cascais)"
-          className="block w-full rounded-xl border border-gray-300 bg-white py-4 pl-12 pr-12 text-lg placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="block w-full rounded-xl border border-input bg-card py-4 pl-12 pr-12 text-lg placeholder:text-muted-foreground/70 shadow-card focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           autoComplete="off"
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -107,8 +107,8 @@ export function ConcelhoSearch() {
         </div>
       </div>
 
-      <p className="mt-2 text-sm text-gray-500">
-        Mostramos apoios nacionais + municipais ligados ao teu concelho.
+      <p className="mt-2 text-sm text-muted-foreground">
+        Mostramos apoios nacionais e municipais ligados ao teu concelho.
       </p>
 
       {/* Resultados dropdown */}
@@ -125,8 +125,8 @@ export function ConcelhoSearch() {
               aria-selected={index === selectedIndex}
               className={`cursor-pointer px-4 py-3 transition ${
                 index === selectedIndex
-                  ? 'bg-primary/10 text-primary'
-                  : 'hover:bg-gray-50'
+                  ? 'bg-primary-50 text-primary'
+                  : 'hover:bg-muted'
               }`}
               onClick={() => selectConcelho(concelho)}
             >
@@ -154,7 +154,7 @@ export function ConcelhoSearch() {
             router.push(`/apoios?q=${encodeURIComponent(query)}`);
           }
         }}
-        className="mt-4 w-full rounded-xl bg-primary px-6 py-4 text-lg font-medium text-white shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2"
+        className="mt-4 w-full rounded-xl bg-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-card transition hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 active:translate-y-px"
       >
         Ver apoios abertos
       </button>

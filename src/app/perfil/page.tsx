@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { FileText, Users, Home, Heart, Settings, ArrowRight, User, Mail, CreditCard } from 'lucide-react';
+import { FileText, Users, Home, Heart, Settings, ArrowRight, User, Mail, CreditCard, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 
@@ -74,10 +74,10 @@ export default function PerfilPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-muted-foreground">Carregando...</p>
         </div>
       </div>
     );
@@ -86,7 +86,7 @@ export default function PerfilPage() {
   // O middleware já protege esta rota
   if (!session) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
       </div>
     );
@@ -98,50 +98,50 @@ export default function PerfilPage() {
   return (
     <div>
       <Header />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-ink mb-2">
             Bem-vindo, {session.user.name?.split(' ')[0] || 'Utilizador'}! 👋
           </h1>
-          <p className="text-gray-600">Gere o teu dossiê de eficiência energética</p>
+          <p className="text-muted-foreground">Gere o teu dossiê de eficiência energética</p>
         </div>
 
         {/* Perfil */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
+        <div className="bg-card rounded-xl shadow-card border border-border p-6 mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-100 rounded-full">
-                <User className="h-7 w-7 text-blue-600" />
+              <div className="p-3 bg-primary-50 rounded-full">
+                <User className="h-7 w-7 text-primary-600" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-ink">
                   {session.user.name || 'Utilizador'}
                 </h2>
               </div>
             </div>
 
-            <span className="inline-flex w-fit px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+            <span className="inline-flex w-fit px-2 py-1 text-xs font-medium bg-success-100 text-success-800 rounded-full">
               {session.user.role === 'ADMIN' ? 'Administrador' : 'Utilizador'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <div className="flex items-center gap-3">
-              <Mail className="h-4 w-4 text-gray-400" />
+              <Mail className="h-4 w-4 text-muted-foreground" />
               <div>
-                <p className="text-xs text-gray-500">Email</p>
-                <p className="text-sm text-gray-900">{session.user.email || 'Sem email'}</p>
+                <p className="text-xs text-muted-foreground">Email</p>
+                <p className="text-sm text-ink">{session.user.email || 'Sem email'}</p>
               </div>
             </div>
 
             {session.user.nif && (
               <div className="flex items-center gap-3">
-                <CreditCard className="h-4 w-4 text-gray-400" />
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-xs text-gray-500">NIF</p>
-                  <p className="text-sm text-gray-900">{session.user.nif}</p>
+                  <p className="text-xs text-muted-foreground">NIF</p>
+                  <p className="text-sm text-ink">{session.user.nif}</p>
                 </div>
               </div>
             )}
@@ -152,22 +152,22 @@ export default function PerfilPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           
           {/* Dossiê Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="bg-card rounded-xl shadow-card border border-border p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FileText className="h-6 w-6 text-blue-600" />
+                <div className="p-2 bg-primary-50 rounded-lg">
+                  <FileText className="h-6 w-6 text-primary-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-gray-900">O Meu Dossiê</h2>
+                <h2 className="text-lg font-semibold text-ink">O Meu Dossiê</h2>
               </div>
               {loading ? (
-                <div className="animate-pulse h-4 w-12 bg-gray-200 rounded"></div>
+                <div className="animate-pulse h-4 w-12 bg-muted rounded"></div>
               ) : (
                 <span className={`text-sm font-medium px-2 py-1 rounded ${
                   completionPercentage === 100
-                    ? 'bg-green-100 text-green-800'
+                    ? 'bg-success-100 text-success-800'
                     : completionPercentage >= 50
-                    ? 'bg-yellow-100 text-yellow-800' 
+                    ? 'bg-sun-100 text-sun-foreground'
                     : 'bg-red-100 text-red-800'
                 }`}>
                   {completionPercentage}%
@@ -177,24 +177,24 @@ export default function PerfilPage() {
             
             {loading ? (
               <div className="space-y-3">
-                <div className="animate-pulse h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="animate-pulse h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="animate-pulse h-4 bg-muted rounded w-3/4"></div>
+                <div className="animate-pulse h-4 bg-muted rounded w-1/2"></div>
               </div>
             ) : dossier?.hasData ? (
               <div className="space-y-3">
-                <p className="text-sm text-gray-600">
-                  📍 {dossier.address || 'Morada não definida'}
+                <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4 shrink-0" /> {dossier.address || 'Morada não definida'}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Última atualização: {dossier.lastUpdated}
                 </p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-                  <div 
+                <div className="w-full bg-muted rounded-full h-2 mt-3">
+                  <div
                     className={`h-2 rounded-full transition-all duration-300 ${
                       completionPercentage === 100
-                        ? 'bg-green-500'
+                        ? 'bg-success-500'
                         : completionPercentage >= 50
-                        ? 'bg-yellow-500'
+                        ? 'bg-sun-500'
                         : 'bg-red-500'
                     }`}
                     style={{ width: `${completionPercentage}%` }}
@@ -203,19 +203,19 @@ export default function PerfilPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Ainda não criou o seu dossiê energético
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Preencha os seus dados para receber recomendações personalizadas
                 </p>
               </div>
             )}
             
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-border">
               <Link 
                 href="/conta/dossier" 
-                className="flex items-center justify-between text-sm font-medium text-blue-600 hover:text-blue-700 transition"
+                className="flex items-center justify-between text-sm font-medium text-primary-600 hover:text-primary-700 transition"
               >
                 {dossier?.hasData ? 'Editar Dossiê' : 'Criar Dossiê'}
                 <ArrowRight className="h-4 w-4" />
@@ -224,16 +224,16 @@ export default function PerfilPage() {
           </div>
 
           {/* Recomendações Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="bg-card rounded-xl shadow-card border border-border p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Users className="h-6 w-6 text-green-600" />
+              <div className="p-2 bg-success-100 rounded-lg">
+                <Users className="h-6 w-6 text-success-600" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">Recomendações</h2>
+              <h2 className="text-lg font-semibold text-ink">Recomendações</h2>
             </div>
             
             <div className="space-y-3">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {canSeeRecommendations
                   ? 'Veja os apoios disponíveis para si'
                   : 'Complete o dossiê para ver recomendações'
@@ -241,12 +241,12 @@ export default function PerfilPage() {
               </p>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-border">
               <Link 
                 href={canSeeRecommendations
                   ? "/conta/recomendacoes" 
                   : "/conta/dossier"}
-                className="flex items-center justify-between text-sm font-medium text-green-600 hover:text-green-700 transition"
+                className="flex items-center justify-between text-sm font-medium text-success-600 hover:text-success-700 transition"
               >
                 {canSeeRecommendations
                   ? 'Ver Recomendações'
@@ -258,21 +258,21 @@ export default function PerfilPage() {
           </div>
 
           {/* Apoios Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="bg-card rounded-xl shadow-card border border-border p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Home className="h-6 w-6 text-purple-600" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">Explorar Apoios</h2>
+              <h2 className="text-lg font-semibold text-ink">Explorar Apoios</h2>
             </div>
             
             <div className="space-y-3">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Descubra todos os programas de apoio disponíveis
               </p>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-border">
               <Link 
                 href="/apoios" 
                 className="flex items-center justify-between text-sm font-medium text-purple-600 hover:text-purple-700 transition"
@@ -285,48 +285,48 @@ export default function PerfilPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
+        <div className="bg-card rounded-xl shadow-card border border-border p-6">
+          <h2 className="text-xl font-semibold text-ink mb-4">Ações Rápidas</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <Link 
               href="/conta/dossier" 
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition group"
+              className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-primary-300 hover:bg-primary-50 transition group"
             >
-              <FileText className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">Editar Dossiê</span>
+              <FileText className="h-5 w-5 text-muted-foreground group-hover:text-primary-600" />
+              <span className="text-sm font-medium text-ink group-hover:text-primary-700">Editar Dossiê</span>
             </Link>
             
             <Link 
               href="/conta/recomendacoes" 
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition group"
+              className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-success-300 hover:bg-success-50 transition group"
             >
-              <Users className="h-5 w-5 text-gray-600 group-hover:text-green-600" />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-green-700">Ver Recomendações</span>
+              <Users className="h-5 w-5 text-muted-foreground group-hover:text-success-600" />
+              <span className="text-sm font-medium text-ink group-hover:text-success-700">Ver Recomendações</span>
             </Link>
             
             <Link 
               href="/apoios" 
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition group"
+              className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-purple-300 hover:bg-purple-50 transition group"
             >
-              <Home className="h-5 w-5 text-gray-600 group-hover:text-purple-600" />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700">Explorar Apoios</span>
+              <Home className="h-5 w-5 text-muted-foreground group-hover:text-purple-600" />
+              <span className="text-sm font-medium text-ink group-hover:text-purple-700">Explorar Apoios</span>
             </Link>
 
             <Link 
               href="/conta/favoritos" 
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition group"
+              className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-red-300 hover:bg-red-50 transition group"
             >
-              <Heart className="h-5 w-5 text-gray-600 group-hover:text-red-600" />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-red-700">Ver Favoritos</span>
+              <Heart className="h-5 w-5 text-muted-foreground group-hover:text-red-600" />
+              <span className="text-sm font-medium text-ink group-hover:text-red-700">Ver Favoritos</span>
             </Link>
             
             <Link 
               href="/verificar" 
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition group"
+              className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-orange-300 hover:bg-orange-50 transition group"
             >
-              <Settings className="h-5 w-5 text-gray-600 group-hover:text-orange-600" />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-orange-700">Verificar Elegibilidade</span>
+              <Settings className="h-5 w-5 text-muted-foreground group-hover:text-orange-600" />
+              <span className="text-sm font-medium text-ink group-hover:text-orange-700">Verificar Elegibilidade</span>
             </Link>
           </div>
         </div>

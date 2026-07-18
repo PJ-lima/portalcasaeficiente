@@ -74,7 +74,7 @@ export function SaveProgramButton({
   const paddingClass = size === 'sm' ? 'px-3 py-1.5 text-sm' : 'px-4 py-2 text-sm';
   const savedClass = isSaved
     ? 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'
-    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
+    : 'border-input bg-card text-ink hover:border-primary-300 hover:bg-primary-50';
 
   return (
     <div>
