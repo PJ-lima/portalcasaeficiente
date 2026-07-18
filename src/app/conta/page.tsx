@@ -106,7 +106,7 @@ function ContaContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+    <main className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -118,20 +118,20 @@ function ContaContent() {
               height={56}
               className="rounded-lg object-cover w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
             />
-            <span className="text-xl font-bold text-gray-900">Casa Eficiente</span>
+            <span className="text-xl font-bold text-ink">Casa Eficiente</span>
           </Link>
         </div>
 
         {/* Card */}
-        <div className="bg-white shadow-lg rounded-2xl p-8">
+        <div className="border border-border bg-card shadow-card rounded-2xl p-8">
           {/* Tabs */}
-          <div className="flex border-b border-gray-200 mb-6">
+          <div className="flex border-b border-border mb-6">
             <button
               onClick={() => { setIsLogin(true); setError(''); }}
               className={`flex-1 pb-3 text-sm font-medium border-b-2 transition-colors ${
                 isLogin
                   ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-muted-foreground hover:text-ink'
               }`}
             >
               Entrar
@@ -141,7 +141,7 @@ function ContaContent() {
               className={`flex-1 pb-3 text-sm font-medium border-b-2 transition-colors ${
                 !isLogin
                   ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-muted-foreground hover:text-ink'
               }`}
             >
               Criar Conta
@@ -155,7 +155,7 @@ function ContaContent() {
             </div>
           )}
           {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            <div className="mb-4 p-3 bg-success-50 border border-success-200 rounded-lg text-success-700 text-sm">
               {success}
             </div>
           )}
@@ -164,7 +164,7 @@ function ContaContent() {
           {isLogin ? (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-ink mb-1">
                   Email
                 </label>
                 <input
@@ -172,13 +172,13 @@ function ContaContent() {
                   id="email"
                   value={loginData.email}
                   onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="seu@email.pt"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-ink mb-1">
                   Password
                 </label>
                 <input
@@ -186,7 +186,7 @@ function ContaContent() {
                   id="password"
                   value={loginData.password}
                   onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="••••••••"
                   required
                 />
@@ -199,7 +199,7 @@ function ContaContent() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 px-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading ? 'A entrar...' : 'Entrar'}
               </button>
@@ -208,7 +208,7 @@ function ContaContent() {
             /* Register Form */
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-ink mb-1">
                   Nome completo
                 </label>
                 <input
@@ -216,13 +216,13 @@ function ContaContent() {
                   id="name"
                   value={registerData.name}
                   onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="O seu nome"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="reg-email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="reg-email" className="block text-sm font-medium text-ink mb-1">
                   Email
                 </label>
                 <input
@@ -230,28 +230,28 @@ function ContaContent() {
                   id="reg-email"
                   value={registerData.email}
                   onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="seu@email.pt"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="nif" className="block text-sm font-medium text-gray-700 mb-1">
-                  NIF <span className="text-gray-400">(opcional)</span>
+                <label htmlFor="nif" className="block text-sm font-medium text-ink mb-1">
+                  NIF <span className="text-muted-foreground">(opcional)</span>
                 </label>
                 <input
                   type="text"
                   id="nif"
                   value={registerData.nif}
                   onChange={(e) => setRegisterData({ ...registerData, nif: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="123456789"
                   maxLength={9}
                   pattern="[0-9]{9}"
                 />
               </div>
               <div>
-                <label htmlFor="reg-password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="reg-password" className="block text-sm font-medium text-ink mb-1">
                   Password
                 </label>
                 <input
@@ -259,14 +259,14 @@ function ContaContent() {
                   id="reg-password"
                   value={registerData.password}
                   onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Mínimo 8 caracteres"
                   minLength={8}
                   required
                 />
               </div>
               <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="confirm-password" className="block text-sm font-medium text-ink mb-1">
                   Confirmar Password
                 </label>
                 <input
@@ -274,7 +274,7 @@ function ContaContent() {
                   id="confirm-password"
                   value={registerData.confirmPassword}
                   onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Repita a password"
                   minLength={8}
                   required
@@ -283,7 +283,7 @@ function ContaContent() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 px-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading ? 'A criar conta...' : 'Criar Conta'}
               </button>
@@ -292,7 +292,7 @@ function ContaContent() {
 
           {/* Terms */}
           {!isLogin && (
-            <p className="mt-4 text-xs text-gray-500 text-center">
+            <p className="mt-4 text-xs text-muted-foreground text-center">
               Ao criar conta, aceita os{' '}
               <Link href="/termos" className="text-primary-600 hover:underline">
                 Termos de Serviço
@@ -308,7 +308,7 @@ function ContaContent() {
 
         {/* Back to home */}
         <div className="text-center mt-6">
-          <Link href="/" className="text-sm text-gray-600 hover:text-primary-600">
+          <Link href="/" className="text-sm text-muted-foreground hover:text-primary-600">
             ← Voltar à página inicial
           </Link>
         </div>

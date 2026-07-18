@@ -61,10 +61,10 @@ export default function FavoritosPage() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary-600"></div>
-            <p className="mt-4 text-gray-600">A carregar favoritos...</p>
+            <p className="mt-4 text-muted-foreground">A carregar favoritos...</p>
           </div>
         </div>
       </>
@@ -75,12 +75,12 @@ export default function FavoritosPage() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
-            <p className="text-gray-700">Sessão inválida. Volte a iniciar sessão.</p>
+            <p className="text-ink">Sessão inválida. Volte a iniciar sessão.</p>
             <Link
               href="/conta"
-              className="mt-3 inline-flex rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+              className="mt-3 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary-800"
             >
               Ir para login
             </Link>
@@ -93,21 +93,21 @@ export default function FavoritosPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-6">
             <div className="flex items-center gap-4">
               <Link
                 href="/perfil"
-                className="flex items-center gap-2 text-gray-600 transition hover:text-gray-900"
+                className="flex items-center gap-2 text-muted-foreground transition hover:text-ink"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Voltar ao Perfil</span>
               </Link>
-              <span className="text-gray-300">|</span>
+              <span className="text-border">|</span>
               <Link
                 href="/"
-                className="flex items-center gap-2 text-gray-600 transition hover:text-gray-900"
+                className="flex items-center gap-2 text-muted-foreground transition hover:text-ink"
               >
                 <Home className="h-4 w-4" />
                 <span>Página Inicial</span>
@@ -117,8 +117,8 @@ export default function FavoritosPage() {
 
           <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Programas Guardados</h1>
-              <p className="mt-2 text-lg text-gray-600">
+              <h1 className="text-3xl font-bold text-ink">Programas Guardados</h1>
+              <p className="mt-2 text-lg text-muted-foreground">
                 Acompanhe os programas que marcou como favoritos.
               </p>
             </div>
@@ -135,11 +135,11 @@ export default function FavoritosPage() {
           )}
 
           {!error && total === 0 ? (
-            <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
-              <p className="text-gray-700">Ainda não guardou nenhum programa.</p>
+            <div className="rounded-xl border border-border bg-card p-8 text-center shadow-card">
+              <p className="text-ink">Ainda não guardou nenhum programa.</p>
               <Link
                 href="/apoios"
-                className="mt-4 inline-flex rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+                className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary-800"
               >
                 Explorar apoios
               </Link>
@@ -149,29 +149,29 @@ export default function FavoritosPage() {
               {programs.map((saved) => (
                 <article
                   key={saved.savedId}
-                  className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                  className="rounded-xl border border-border bg-card p-6 shadow-card"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <Link
                         href={`/apoios/${saved.program.slug}`}
-                        className="text-xl font-semibold text-gray-900 transition hover:text-primary"
+                        className="text-xl font-semibold text-ink transition hover:text-primary"
                       >
                         {saved.program.title}
                       </Link>
-                      <p className="mt-2 text-sm text-gray-500">
+                      <p className="mt-2 text-sm text-muted-foreground">
                         Guardado em {new Date(saved.savedAt).toLocaleDateString('pt-PT')}
                       </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                         <span>{saved.program.entity || 'Sem entidade'}</span>
                         <span>•</span>
                         <span>{saved.program.programType === 'NATIONAL' ? 'Nacional' : 'Municipal'}</span>
                       </div>
                       {saved.program.summary && (
-                        <p className="mt-3 line-clamp-2 text-sm text-gray-600">{saved.program.summary}</p>
+                        <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">{saved.program.summary}</p>
                       )}
                       {saved.notes && (
-                        <div className="mt-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
+                        <div className="mt-3 rounded-lg bg-muted p-3 text-sm text-ink">
                           <span className="font-medium">Nota:</span> {saved.notes}
                         </div>
                       )}

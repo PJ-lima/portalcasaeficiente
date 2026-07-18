@@ -76,8 +76,8 @@ export default function RecommendationsList() {
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">A calcular elegibilidade...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success-600 mx-auto"></div>
+        <p className="mt-4 text-muted-foreground">A calcular elegibilidade...</p>
       </div>
     );
   }
@@ -102,46 +102,46 @@ export default function RecommendationsList() {
   const getResultBadge = (result: EligibilityResult) => {
     switch (result) {
       case 'ELIGIBLE':
-        return <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">✓ Elegível</span>;
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success-100 text-success-800">✓ Elegível</span>;
       case 'MAYBE':
-        return <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">? Talvez</span>;
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sun-100 text-sun-foreground">? Talvez</span>;
       case 'NOT_ELIGIBLE':
         return <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">✗ Não elegível</span>;
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 50) return 'text-yellow-600';
+    if (score >= 80) return 'text-success-600';
+    if (score >= 50) return 'text-sun-600';
     return 'text-red-600';
   };
 
   return (
     <div className="space-y-6">
       {/* Header com estatísticas */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-blue-900 mb-2">
+      <div className="bg-primary-50 rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-primary-800 mb-2">
           Programas Recomendados para si
         </h2>
-        <p className="text-blue-700 mb-4">
+        <p className="text-primary-800 mb-4">
           Com base no seu perfil em <strong>{data.user.concelho}</strong>
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-gray-900">{data.total}</div>
-            <div className="text-sm text-gray-600">Total</div>
+          <div className="bg-card rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-ink">{data.total}</div>
+            <div className="text-sm text-muted-foreground">Total</div>
           </div>
-          <div className="bg-white rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{data.eligible}</div>
-            <div className="text-sm text-gray-600">Elegível</div>
+          <div className="bg-card rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-success-600">{data.eligible}</div>
+            <div className="text-sm text-muted-foreground">Elegível</div>
           </div>
-          <div className="bg-white rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-600">{data.maybe}</div>
-            <div className="text-sm text-gray-600">Talvez</div>
+          <div className="bg-card rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-sun-600">{data.maybe}</div>
+            <div className="text-sm text-muted-foreground">Talvez</div>
           </div>
-          <div className="bg-white rounded-lg p-4 text-center">
+          <div className="bg-card rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-red-600">{data.notEligible}</div>
-            <div className="text-sm text-gray-600">Não elegível</div>
+            <div className="text-sm text-muted-foreground">Não elegível</div>
           </div>
         </div>
       </div>
@@ -152,8 +152,8 @@ export default function RecommendationsList() {
           onClick={() => setFilter('ALL')}
           className={`px-4 py-2 rounded-lg font-medium transition ${
             filter === 'ALL'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-primary text-primary-foreground'
+              : 'border border-input bg-card text-ink hover:border-primary-300 hover:bg-primary-50'
           }`}
         >
           Todos ({data.total})
@@ -162,8 +162,8 @@ export default function RecommendationsList() {
           onClick={() => setFilter('ELIGIBLE')}
           className={`px-4 py-2 rounded-lg font-medium transition ${
             filter === 'ELIGIBLE'
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-success-600 text-white'
+              : 'border border-input bg-card text-ink hover:border-primary-300 hover:bg-primary-50'
           }`}
         >
           Elegível ({data.eligible})
@@ -172,8 +172,8 @@ export default function RecommendationsList() {
           onClick={() => setFilter('MAYBE')}
           className={`px-4 py-2 rounded-lg font-medium transition ${
             filter === 'MAYBE'
-              ? 'bg-yellow-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-sun text-sun-foreground'
+              : 'border border-input bg-card text-ink hover:border-primary-300 hover:bg-primary-50'
           }`}
         >
           Talvez ({data.maybe})
@@ -183,7 +183,7 @@ export default function RecommendationsList() {
           className={`px-4 py-2 rounded-lg font-medium transition ${
             filter === 'NOT_ELIGIBLE'
               ? 'bg-red-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              : 'border border-input bg-card text-ink hover:border-primary-300 hover:bg-primary-50'
           }`}
         >
           Não elegível ({data.notEligible})
@@ -193,24 +193,24 @@ export default function RecommendationsList() {
       {/* Lista de programas */}
       <div className="space-y-4">
         {filteredRecommendations.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             Nenhum programa encontrado para este filtro.
           </div>
         ) : (
           filteredRecommendations.map((rec) => (
             <div
               key={rec.program.id}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition"
+              className="bg-card border border-border rounded-lg p-6 shadow-card hover:shadow-card-hover transition"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <Link 
                     href={`/apoios/${rec.program.slug}`}
-                    className="text-lg font-semibold text-blue-600 hover:text-blue-800"
+                    className="text-lg font-semibold text-primary-600 hover:text-primary-800"
                   >
                     {rec.program.title}
                   </Link>
-                  <div className="flex items-center gap-3 mt-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                     <span className="font-medium">{rec.program.entity || 'Sem entidade'}</span>
                     <span>•</span>
                     <span className="capitalize">{rec.program.programType === 'NATIONAL' ? 'Nacional' : 'Municipal'}</span>
@@ -225,17 +225,17 @@ export default function RecommendationsList() {
               </div>
 
               {/* Resumo da elegibilidade */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-3">
-                <p className="text-gray-700">{rec.evaluation.summary}</p>
+              <div className="bg-muted rounded-lg p-4 mb-3">
+                <p className="text-ink">{rec.evaluation.summary}</p>
                 {rec.program.summary && (
-                  <p className="text-sm text-gray-600 mt-2">{rec.program.summary}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{rec.program.summary}</p>
                 )}
               </div>
 
               {/* Detalhes das regras */}
               {rec.evaluation.evaluations.length > 0 && (
                 <details className="mt-3">
-                  <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900">
+                  <summary className="cursor-pointer text-sm font-medium text-muted-foreground hover:text-ink">
                     Ver detalhes da avaliação ({rec.evaluation.evaluations.length} regras)
                   </summary>
                   <div className="mt-3 space-y-2">
@@ -243,7 +243,7 @@ export default function RecommendationsList() {
                       <div
                         key={idx}
                         className={`text-sm p-2 rounded ${
-                          ruleEval.passed ? 'bg-green-50 text-green-800' : 'bg-gray-50 text-gray-700'
+                          ruleEval.passed ? 'bg-success-50 text-success-800' : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {ruleEval.reason}
@@ -256,12 +256,12 @@ export default function RecommendationsList() {
 
               {/* Link oficial */}
               {rec.program.officialUrl && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-border">
                   <a
                     href={rec.program.officialUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    className="text-sm text-primary-600 hover:text-primary-800 underline"
                   >
                     Ver página oficial →
                   </a>

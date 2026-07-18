@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Home } from 'lucide-react';
+import { Save, ArrowLeft, Home, MapPin, Users } from 'lucide-react';
 
 interface Concelho {
   id: string;
@@ -326,12 +326,12 @@ export function DossierForm() {
   return (
     <div className="space-y-6">
       {/* Header com navegação */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+      <div className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:border-primary-300 hover:bg-primary-50"
           >
             <ArrowLeft className="h-4 w-4" />
             Voltar Atrás
@@ -340,23 +340,23 @@ export function DossierForm() {
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:border-primary-300 hover:bg-primary-50"
           >
             <Home className="h-4 w-4" />
             Página Inicial
           </button>
         </div>
         
-        <h1 className="text-2xl font-bold text-gray-900">O Meu Dossiê</h1>
+        <h1 className="text-2xl font-bold text-ink">O Meu Dossiê</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
       {/* Localização */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">📍 Localização</h2>
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-ink mb-4"><MapPin className="h-5 w-5 text-primary" /> Localização</h2>
         <div className="space-y-4">
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="address" className="block text-sm font-medium text-ink mb-1">
               Morada *
             </label>
             <input
@@ -366,7 +366,7 @@ export function DossierForm() {
               value={formData.address}
               onChange={handleChange}
               className={`w-full rounded-lg border px-4 py-2 ${
-                !formData.address && error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                !formData.address && error ? 'border-red-300 bg-red-50' : 'border-input bg-card'
               }`}
               placeholder="Rua, número, andar..."
               required
@@ -375,7 +375,7 @@ export function DossierForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="postalCode" className="block text-sm font-medium text-ink mb-1">
                 Código Postal *
               </label>
               <div className="relative">
@@ -388,23 +388,23 @@ export function DossierForm() {
                   maxLength={8}
                   className={`w-full rounded-lg border px-4 py-2 ${
                     validationState.isValidating
-                      ? 'border-yellow-300 bg-yellow-50'
+                      ? 'border-sun-300 bg-sun-100'
                       : validationState.messageType === 'warning'
-                      ? 'border-yellow-300 bg-yellow-50'
+                      ? 'border-sun-300 bg-sun-100'
                       : validationState.isValidPostal === true
-                      ? 'border-green-300 bg-green-50'
+                      ? 'border-success-300 bg-success-50'
                       : validationState.isValidPostal === false
                       ? 'border-red-300 bg-red-50'
                       : formData.postalCode && !isValidPostalCode(formData.postalCode)
                       ? 'border-red-300 bg-red-50'
-                      : 'border-gray-300'
+                      : 'border-input bg-card'
                   }`}
                   placeholder="0000-000"
                   required
                 />
                 {validationState.isValidating && (
                   <div className="absolute right-3 top-2.5">
-                    <div className="animate-spin h-4 w-4 border-2 border-yellow-400 border-t-transparent rounded-full"></div>
+                    <div className="animate-spin h-4 w-4 border-2 border-sun-400 border-t-transparent rounded-full"></div>
                   </div>
                 )}
               </div>
@@ -414,9 +414,9 @@ export function DossierForm() {
               {validationState.postalMessage && isValidPostalCode(formData.postalCode) && (
                 <p className={`text-xs mt-1 ${
                   validationState.messageType === 'success'
-                    ? 'text-green-600'
+                    ? 'text-success-600'
                     : validationState.messageType === 'warning'
-                    ? 'text-yellow-700'
+                    ? 'text-sun-600'
                     : 'text-red-500'
                 }`}>
                   {validationState.postalMessage}
@@ -425,7 +425,7 @@ export function DossierForm() {
             </div>
 
             <div className="relative">
-              <label htmlFor="concelhoSearch" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="concelhoSearch" className="block text-sm font-medium text-ink mb-1">
                 Concelho *
               </label>
               <input
@@ -435,19 +435,19 @@ export function DossierForm() {
                 value={concelhoSearch}
                 onChange={handleConcelhoSearchChange}
                 onFocus={() => setShowConcelhoDropdown(concelhoSearch.length > 0)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                className="w-full rounded-lg border border-input bg-card px-4 py-2"
                 placeholder="Digite para pesquisar..."
                 autoComplete="off"
                 required
               />
               {showConcelhoDropdown && filteredConcelhos.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-1 bg-card border border-input rounded-lg shadow-lg max-h-40 overflow-y-auto">
                   {filteredConcelhos.map((concelho) => (
                     <button
                       key={concelho.id}
                       type="button"
                       onClick={() => selectConcelho(concelho)}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100"
+                      className="w-full text-left px-4 py-2 hover:bg-muted focus:bg-muted"
                     >
                       {concelho.label}
                     </button>
@@ -455,7 +455,7 @@ export function DossierForm() {
                 </div>
               )}
               {formData.concelhoId && (
-                <p className="text-green-600 text-xs mt-1">✓ Concelho selecionado</p>
+                <p className="text-success-600 text-xs mt-1">✓ Concelho selecionado</p>
               )}
             </div>
           </div>
@@ -464,7 +464,7 @@ export function DossierForm() {
 
       {/* Imóvel */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">🏠 Imóvel</h2>
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-ink mb-4"><Home className="h-5 w-5 text-primary" /> Imóvel</h2>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <input
@@ -473,16 +473,16 @@ export function DossierForm() {
               name="isMainResidence"
               checked={formData.isMainResidence}
               onChange={handleChange}
-              className="rounded border-gray-300"
+              className="rounded border-input"
             />
-            <label htmlFor="isMainResidence" className="text-sm text-gray-700">
+            <label htmlFor="isMainResidence" className="text-sm text-ink">
               É a minha habitação própria permanente
             </label>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="propertyType" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="propertyType" className="block text-sm font-medium text-ink mb-1">
                 Tipo de Imóvel
               </label>
               <select
@@ -490,7 +490,7 @@ export function DossierForm() {
                 name="propertyType"
                 value={formData.propertyType}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                className="w-full rounded-lg border border-input bg-card px-4 py-2"
               >
                 <option value="apartamento">Apartamento</option>
                 <option value="moradia">Moradia</option>
@@ -499,7 +499,7 @@ export function DossierForm() {
             </div>
 
             <div>
-              <label htmlFor="buildingYear" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="buildingYear" className="block text-sm font-medium text-ink mb-1">
                 Ano de Construção *
               </label>
               <input
@@ -509,7 +509,7 @@ export function DossierForm() {
                 value={formData.buildingYear}
                 onChange={handleChange}
                 className={`w-full rounded-lg border px-4 py-2 ${
-                  !formData.buildingYear && error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  !formData.buildingYear && error ? 'border-red-300 bg-red-50' : 'border-input bg-card'
                 }`}
                 placeholder="Ex: 1990"
                 min="1800"
@@ -520,7 +520,7 @@ export function DossierForm() {
           </div>
 
           <div>
-            <label htmlFor="energyCertificate" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="energyCertificate" className="block text-sm font-medium text-ink mb-1">
               Certificado Energético
             </label>
             <select
@@ -528,7 +528,7 @@ export function DossierForm() {
               name="energyCertificate"
               value={formData.energyCertificate}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2"
+              className="w-full rounded-lg border border-input bg-card px-4 py-2"
             >
               <option value="">Não sei / Não tenho</option>
               <option value="A+">A+</option>
@@ -546,11 +546,11 @@ export function DossierForm() {
 
       {/* Agregado Familiar */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">👥 Agregado Familiar</h2>
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-ink mb-4"><Users className="h-5 w-5 text-primary" /> Agregado Familiar</h2>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="householdSize" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="householdSize" className="block text-sm font-medium text-ink mb-1">
                 Número de Pessoas
               </label>
               <input
@@ -559,14 +559,14 @@ export function DossierForm() {
                 name="householdSize"
                 value={formData.householdSize}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                className="w-full rounded-lg border border-input bg-card px-4 py-2"
                 placeholder="Ex: 3"
                 min="1"
               />
             </div>
 
             <div>
-              <label htmlFor="annualIncome" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="annualIncome" className="block text-sm font-medium text-ink mb-1">
                 Rendimento Anual (€)
               </label>
               <input
@@ -575,7 +575,7 @@ export function DossierForm() {
                 name="annualIncome"
                 value={formData.annualIncome}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                className="w-full rounded-lg border border-input bg-card px-4 py-2"
                 placeholder="Ex: 25000"
                 min="0"
               />
@@ -590,9 +590,9 @@ export function DossierForm() {
                 name="hasSocialTariff"
                 checked={formData.hasSocialTariff}
                 onChange={handleChange}
-                className="rounded border-gray-300"
+                className="rounded border-input"
               />
-              <label htmlFor="hasSocialTariff" className="text-sm text-gray-700">
+              <label htmlFor="hasSocialTariff" className="text-sm text-ink">
                 Tenho tarifa social de energia
               </label>
             </div>
@@ -604,9 +604,9 @@ export function DossierForm() {
                 name="isDisabledPerson"
                 checked={formData.isDisabledPerson}
                 onChange={handleChange}
-                className="rounded border-gray-300"
+                className="rounded border-input"
               />
-              <label htmlFor="isDisabledPerson" className="text-sm text-gray-700">
+              <label htmlFor="isDisabledPerson" className="text-sm text-ink">
                 Pessoa com deficiência no agregado
               </label>
             </div>
@@ -618,9 +618,9 @@ export function DossierForm() {
                 name="hasElderly"
                 checked={formData.hasElderly}
                 onChange={handleChange}
-                className="rounded border-gray-300"
+                className="rounded border-input"
               />
-              <label htmlFor="hasElderly" className="text-sm text-gray-700">
+              <label htmlFor="hasElderly" className="text-sm text-ink">
                 Pessoa idosa (65+) no agregado
               </label>
             </div>
@@ -636,26 +636,26 @@ export function DossierForm() {
       )}
 
       {success && (
-        <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-          <p className="text-sm text-green-800">
+        <div className="rounded-lg bg-success-50 border border-success-200 p-4">
+          <p className="text-sm text-success-800">
             ✅ Dossiê guardado com sucesso! {warning ? 'Reveja o aviso abaixo.' : 'A redirecionar...'}
           </p>
         </div>
       )}
 
       {warning && (
-        <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-4">
-          <p className="text-sm text-yellow-800">{warning}</p>
+        <div className="rounded-lg bg-sun-100 p-4">
+          <p className="text-sm text-sun-foreground">{warning}</p>
         </div>
       )}
 
       {/* Botões */}
-      <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+      <div className="flex items-center justify-between pt-6 border-t border-border">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => router.push('/apoios')}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-input bg-card px-6 py-3 font-medium text-ink shadow-sm transition hover:border-primary-300 hover:bg-primary-50"
           >
             Ver Apoios Disponíveis
           </button>
@@ -664,7 +664,7 @@ export function DossierForm() {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-medium text-white shadow-sm transition hover:bg-primary/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-800 disabled:opacity-50"
         >
           <Save className="h-5 w-5" />
           {loading ? 'A guardar...' : 'Guardar Dossiê'}
