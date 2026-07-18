@@ -205,23 +205,23 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
     return (
       <div className="space-y-6">
         {/* Summary */}
-        <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Resultado da verificação</h2>
-          <p className="mt-2 text-gray-600">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+          <h2 className="font-display text-xl font-semibold text-ink">Resultado da verificação</h2>
+          <p className="mt-2 text-muted-foreground">
             Analisámos {results.total} programas para {formData.concelhoName}.
           </p>
           
           <div className="mt-4 grid grid-cols-3 gap-4">
-            <div className="rounded-lg bg-green-50 p-4 text-center">
-              <p className="text-2xl font-bold text-green-600">{results.summary.eligible}</p>
-              <p className="text-sm text-green-700">Elegível</p>
+            <div className="rounded-lg bg-success-50 p-4 text-center">
+              <p className="font-display text-2xl font-bold text-success-700">{results.summary.eligible}</p>
+              <p className="text-sm text-success-700">Elegível</p>
             </div>
-            <div className="rounded-lg bg-yellow-50 p-4 text-center">
-              <p className="text-2xl font-bold text-yellow-600">{results.summary.maybe}</p>
-              <p className="text-sm text-yellow-700">Talvez</p>
+            <div className="rounded-lg bg-sun-100 p-4 text-center">
+              <p className="font-display text-2xl font-bold text-sun-600">{results.summary.maybe}</p>
+              <p className="text-sm text-sun-foreground">Talvez</p>
             </div>
             <div className="rounded-lg bg-red-50 p-4 text-center">
-              <p className="text-2xl font-bold text-red-600">{results.summary.notEligible}</p>
+              <p className="font-display text-2xl font-bold text-red-700">{results.summary.notEligible}</p>
               <p className="text-sm text-red-700">Não elegível</p>
             </div>
           </div>
@@ -232,41 +232,41 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
           {results.evaluations.map((result) => (
             <div
               key={result.program.id}
-              className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+              className="rounded-xl border border-border bg-card p-6 shadow-card"
             >
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
                     {result.evaluation.result === 'ELIGIBLE' && (
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      <CheckCircle2 className="h-5 w-5 text-success-600" />
                     )}
                     {result.evaluation.result === 'MAYBE' && (
-                      <AlertCircle className="h-5 w-5 text-yellow-500" />
+                      <AlertCircle className="h-5 w-5 text-sun-500" />
                     )}
                     {result.evaluation.result === 'NOT_ELIGIBLE' && (
-                      <XCircle className="h-5 w-5 text-red-500" />
+                      <XCircle className="h-5 w-5 text-red-600" />
                     )}
                     <span className={`text-sm font-medium ${
-                      result.evaluation.result === 'ELIGIBLE' ? 'text-green-600' :
-                      result.evaluation.result === 'MAYBE' ? 'text-yellow-600' : 'text-red-600'
+                      result.evaluation.result === 'ELIGIBLE' ? 'text-success-700' :
+                      result.evaluation.result === 'MAYBE' ? 'text-sun-600' : 'text-red-700'
                     }`}>
                       {eligibilityLabels[result.evaluation.result]}
                     </span>
                   </div>
-                  <h3 className="mt-2 font-semibold text-gray-900">{result.program.name}</h3>
-                  <p className="text-sm text-gray-500">{result.program.entity}</p>
+                  <h3 className="mt-2 font-semibold text-ink">{result.program.name}</h3>
+                  <p className="text-sm text-muted-foreground">{result.program.entity}</p>
                 </div>
                 {result.program.maxAmount && (
                   <div className="text-right">
-                    <p className="text-xs text-gray-500">Até</p>
-                    <p className="font-semibold text-success">
+                    <p className="text-xs text-muted-foreground">Até</p>
+                    <p className="font-display font-semibold text-success-700">
                       {formatCurrency(result.program.maxAmount)}
                     </p>
                   </div>
                 )}
               </div>
               
-              <p className="mt-3 text-sm text-gray-600">
+              <p className="mt-3 text-sm text-muted-foreground">
                 {result.evaluation.summary}
               </p>
               
@@ -286,13 +286,13 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
         <div className="flex gap-4">
           <button
             onClick={() => setStep('location')}
-            className="flex-1 rounded-lg border border-gray-300 py-3 font-medium text-gray-700 transition hover:bg-gray-50"
+            className="flex-1 rounded-lg border border-input bg-card py-3 font-medium text-ink transition hover:border-primary-300 hover:bg-primary-50"
           >
             Nova verificação
           </button>
           <Link
             href="/apoios"
-            className="flex-1 rounded-lg bg-primary py-3 text-center font-medium text-white transition hover:bg-primary/90"
+            className="flex-1 rounded-lg bg-primary py-3 text-center font-semibold text-primary-foreground transition hover:bg-primary-800"
           >
             Ver todos os apoios
           </Link>
@@ -302,13 +302,13 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
   }
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-card">
       {/* Progress */}
       <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-500">
+        <div className="flex justify-between text-sm text-muted-foreground">
           <span>Passo {getStepNumber()} de 4</span>
         </div>
-        <div className="mt-2 h-2 rounded-full bg-gray-200">
+        <div className="mt-2 h-2 rounded-full bg-muted">
           <div 
             className="h-full rounded-full bg-primary transition-all"
             style={{ width: `${(getStepNumber() / 4) * 100}%` }}
@@ -319,8 +319,8 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
       {/* Step: Location */}
       {step === 'location' && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Onde moras?</h2>
-          <p className="text-gray-600">Indica o teu concelho para encontrarmos os apoios disponíveis.</p>
+          <h2 className="font-display text-xl font-semibold text-ink">Onde moras?</h2>
+          <p className="text-muted-foreground">Indica o teu concelho para encontrarmos os apoios disponíveis.</p>
           
           <div className="relative">
             <input
@@ -331,25 +331,25 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
                 searchConcelhos(e.target.value);
               }}
               placeholder="Pesquisar concelho..."
-              className="w-full rounded-lg border border-gray-300 p-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-input bg-card p-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
             {isSearching && (
-              <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+              <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 A pesquisar concelhos...
               </div>
             )}
             
             {concelhoResults.length > 0 && (
-              <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg bg-white shadow-lg ring-1 ring-black/5">
+              <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg bg-card shadow-lg ring-1 ring-ink/5">
                 {concelhoResults.map((c) => (
                   <li
                     key={c.id}
                     onClick={() => selectConcelho(c)}
-                    className="cursor-pointer px-4 py-2 hover:bg-gray-50"
+                    className="cursor-pointer px-4 py-2 hover:bg-muted"
                   >
                     <span className="font-medium">{c.name}</span>
-                    <span className="text-gray-400 ml-1">({c.distrito})</span>
+                    <span className="text-muted-foreground ml-1">({c.distrito})</span>
                   </li>
                 ))}
               </ul>
@@ -357,7 +357,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
           </div>
           
           {formData.concelhoId && (
-            <p className="text-sm text-success">✓ {formData.concelhoName} selecionado</p>
+            <p className="flex items-center gap-1.5 text-sm font-medium text-success-700"><CheckCircle2 className="h-4 w-4" /> {formData.concelhoName} selecionado</p>
           )}
         </div>
       )}
@@ -365,10 +365,10 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
       {/* Step: Property */}
       {step === 'property' && (
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Que tipo de casa tens?</h2>
+          <h2 className="font-display text-xl font-semibold text-ink">Que tipo de casa tens?</h2>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Tipo de imóvel
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -378,8 +378,8 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
                   onClick={() => setFormData({ ...formData, propertyType: type })}
                   className={`rounded-lg border p-3 text-sm transition ${
                     formData.propertyType === type
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary bg-primary-50 text-primary font-medium'
+                      : 'border-border bg-card hover:border-primary-200'
                   }`}
                 >
                   {propertyTypeLabels[type] || type}
@@ -389,7 +389,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Qual é a tua situação?
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -399,8 +399,8 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
                   onClick={() => setFormData({ ...formData, ownershipType: type })}
                   className={`rounded-lg border p-3 text-sm transition ${
                     formData.ownershipType === type
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary bg-primary-50 text-primary font-medium'
+                      : 'border-border bg-card hover:border-primary-200'
                   }`}
                 >
                   {ownershipTypeLabels[type] || type}
@@ -410,7 +410,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Ano de construção (opcional)
             </label>
             <input
@@ -420,7 +420,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
               placeholder="Ex: 1985"
               min="1800"
               max={new Date().getFullYear()}
-              className="w-full rounded-lg border border-gray-300 p-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-input bg-card p-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
         </div>
@@ -429,11 +429,11 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
       {/* Step: Situation */}
       {step === 'situation' && (
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">A tua situação</h2>
-          <p className="text-gray-600">Estas informações são opcionais mas ajudam a encontrar apoios específicos.</p>
+          <h2 className="font-display text-xl font-semibold text-ink">A tua situação</h2>
+          <p className="text-muted-foreground">Estas informações são opcionais mas ajudam a encontrar apoios específicos.</p>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Número de pessoas no agregado
             </label>
             <input
@@ -442,7 +442,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
               onChange={(e) => setFormData({ ...formData, householdSize: parseInt(e.target.value) || undefined })}
               placeholder="Ex: 3"
               min="1"
-              className="w-full rounded-lg border border-gray-300 p-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-input bg-card p-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
           
@@ -452,11 +452,11 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
                 type="checkbox"
                 checked={formData.socialTariff}
                 onChange={(e) => setFormData({ ...formData, socialTariff: e.target.checked })}
-                className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
+                className="h-5 w-5 rounded border-input text-primary focus:ring-primary"
               />
               <div>
-                <span className="font-medium text-gray-900">Tenho tarifa social de energia</span>
-                <p className="text-sm text-gray-500">Alguns programas dão prioridade a beneficiários da tarifa social</p>
+                <span className="font-medium text-ink">Tenho tarifa social de energia</span>
+                <p className="text-sm text-muted-foreground">Alguns programas dão prioridade a beneficiários da tarifa social</p>
               </div>
             </label>
           </div>
@@ -466,8 +466,8 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
       {/* Step: Measures */}
       {step === 'measures' && (
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Que obras queres fazer?</h2>
-          <p className="text-gray-600">Seleciona os tipos de intervenção que te interessam.</p>
+          <h2 className="font-display text-xl font-semibold text-ink">Que obras queres fazer?</h2>
+          <p className="text-muted-foreground">Seleciona os tipos de intervenção que te interessam.</p>
           
           <div className="space-y-2">
             {MEASURE_TYPES.map((measure) => (
@@ -475,17 +475,17 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
                 key={measure}
                 className={`flex items-center gap-3 rounded-lg border p-4 cursor-pointer transition ${
                   formData.desiredMeasures.includes(measure)
-                    ? 'border-primary bg-primary/5'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-primary bg-primary-50'
+                    : 'border-border bg-card hover:border-primary-200'
                 }`}
               >
                 <input
                   type="checkbox"
                   checked={formData.desiredMeasures.includes(measure)}
                   onChange={() => toggleMeasure(measure)}
-                  className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
+                  className="h-5 w-5 rounded border-input text-primary focus:ring-primary"
                 />
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-ink">
                   {measureTypeLabels[measure] || measure}
                 </span>
               </label>
@@ -499,7 +499,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
         {step !== 'location' && (
           <button
             onClick={prevStep}
-            className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-3 font-medium text-gray-700 transition hover:bg-gray-50"
+            className="flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-3 font-medium text-ink transition hover:border-primary-300 hover:bg-primary-50"
           >
             <ChevronLeft className="h-4 w-4" />
             Anterior
@@ -509,7 +509,7 @@ export function EligibilityWizard({ programSlug }: EligibilityWizardProps) {
         <button
           onClick={nextStep}
           disabled={!canProceed() || isLoading}
-          className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground transition hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>
