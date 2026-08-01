@@ -74,7 +74,7 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900">Filtros</h2>
+        <h2 className="font-display font-semibold text-ink">Filtros</h2>
         {hasFilters && (
           <button
             onClick={clearFilters}
@@ -87,7 +87,7 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
 
       {/* Pesquisa por texto */}
       <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Pesquisar</h3>
+        <h3 className="text-sm font-medium text-ink mb-3">Pesquisar</h3>
         <div className="relative">
           <input
             type="text"
@@ -99,9 +99,9 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
               }
             }}
             placeholder="Título ou entidade..."
-            className="w-full rounded-lg border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-lg border border-input bg-card py-2 pl-9 pr-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
         </div>
         {searchText && (
           <button
@@ -109,7 +109,7 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
               setSearchText('');
               updateFilters('q', null);
             }}
-            className="mt-2 text-xs text-gray-500 hover:text-gray-700"
+            className="mt-2 text-xs text-muted-foreground hover:text-ink"
           >
             Limpar pesquisa
           </button>
@@ -118,14 +118,14 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
 
       {/* Tipo de programa */}
       <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Tipo de programa</h3>
+        <h3 className="text-sm font-medium text-ink mb-3">Tipo de programa</h3>
         <div className="space-y-2">
           <button
             onClick={() => updateFilters('programType', null)}
             className={`w-full rounded-lg px-3 py-2 text-left text-sm transition ${
               !searchParams.programType
-                ? 'bg-primary/10 text-primary font-medium'
-                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                ? 'bg-primary-50 text-primary font-medium'
+                : 'bg-card text-muted-foreground hover:bg-muted'
             }`}
           >
             Todos
@@ -136,8 +136,8 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
               onClick={() => updateFilters('programType', option.value)}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition ${
                 searchParams.programType === option.value
-                  ? 'bg-primary/10 text-primary font-medium'
-                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                  ? 'bg-primary-50 text-primary font-medium'
+                  : 'bg-card text-muted-foreground hover:bg-muted'
               }`}
             >
               {option.label}
@@ -148,18 +148,18 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
 
       {/* Status */}
       <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Estado do apoio</h3>
+        <h3 className="text-sm font-medium text-ink mb-3">Estado do apoio</h3>
         <div className="space-y-2">
           {STATUS_OPTIONS.map((option) => (
             <label
               key={option.value}
-              className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-gray-900"
+              className="flex items-center gap-2 text-sm text-ink cursor-pointer"
             >
               <input
                 type="checkbox"
                 checked={selectedStatuses.includes(option.value)}
                 onChange={() => toggleStatus(option.value)}
-                className="rounded border-gray-300 text-primary focus:ring-primary"
+                className="rounded border-input text-primary focus:ring-primary"
               />
               <span>{option.label}</span>
             </label>

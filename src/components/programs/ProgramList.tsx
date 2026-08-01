@@ -117,14 +117,15 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
 
   if (programs.length === 0) {
     return (
-      <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-        <p className="text-gray-500">
-          Nenhum programa encontrado com os filtros selecionados.
+      <div className="rounded-xl border border-border bg-card p-10 text-center shadow-card">
+        <p className="font-display text-lg font-semibold text-ink">
+          Sem resultados para estes filtros
         </p>
-        <Link
-          href="/apoios"
-          className="mt-4 inline-block text-sm text-primary hover:underline"
-        >
+        <p className="mt-2 text-sm text-muted-foreground">
+          Experimenta alargar a pesquisa: remove um filtro ou pesquisa por
+          outro concelho.
+        </p>
+        <Link href="/apoios" className="btn-secondary mt-6">
           Limpar filtros
         </Link>
       </div>
@@ -134,7 +135,7 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
   return (
     <div className="space-y-4">
       {/* Contagem de resultados */}
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted-foreground">
         {total} {total === 1 ? 'programa encontrado' : 'programas encontrados'}
       </p>
 
@@ -152,19 +153,19 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
           return (
             <article
               key={program.id}
-              className="group rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
+              className="group rounded-xl border border-border bg-card p-6 shadow-card transition hover:border-primary-200 hover:shadow-card-hover"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   {/* Program type badge */}
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-primary">
                       {program.programType === 'NATIONAL' ? 'Nacional' : 'Municipal'}
                     </span>
                     {program.entity && (
                       <>
-                        <span className="text-gray-300">•</span>
-                        <span className="text-xs text-gray-500">{program.entity}</span>
+                        <span className="text-border">•</span>
+                        <span className="text-xs text-muted-foreground">{program.entity}</span>
                       </>
                     )}
                   </div>
@@ -173,7 +174,7 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
                   <h2 className="mt-1">
                     <Link
                       href={`/apoios/${program.slug}`}
-                      className="text-lg font-semibold text-gray-900 group-hover:text-primary transition"
+                      className="text-lg font-semibold text-ink group-hover:text-primary transition"
                     >
                       {program.title}
                     </Link>
@@ -181,7 +182,7 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
 
                   {/* Description */}
                   {program.summary && (
-                    <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground line-clamp-2">
                       {program.summary}
                     </p>
                   )}
@@ -192,7 +193,7 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
                       {program.geographies.map((geo) => (
                         <span
                           key={geo.id}
-                          className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700"
+                          className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
                         >
                           {geo.level === 'NATIONAL' ? 'Nacional' : geo.municipality || geo.district}
                         </span>
@@ -203,20 +204,20 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
 
                 {/* Right side info */}
                 <div className="flex flex-col items-end gap-1 text-right">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-gray-500">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     Estado do apoio
                   </p>
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${programStatusColors[program.status] || 'bg-gray-100'}`}>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${programStatusColors[program.status] || 'bg-muted'}`}>
                     {programStatusLabels[program.status] || program.status}
                   </span>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Última verificação: {formatRelativeDaysFromNow(latestVerificationDate)}
                   </p>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="mt-4 flex items-center justify-between border-t pt-4">
+              <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                 <div className="flex items-center gap-3">
                   <Link
                     href={`/apoios/${program.slug}`}
@@ -235,7 +236,7 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
 
                 <Link
                   href={`/verificar?programa=${program.slug}`}
-                  className="inline-flex items-center rounded-lg bg-success/10 px-3 py-1.5 text-sm font-medium text-success transition hover:bg-success/20"
+                  className="inline-flex items-center rounded-lg bg-success-50 px-3 py-1.5 text-sm font-medium text-success-700 transition hover:bg-success-100"
                 >
                   Ver se sou elegível
                 </Link>

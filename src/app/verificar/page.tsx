@@ -15,15 +15,16 @@ export default async function VerificarPage({ searchParams }: PageProps) {
     <>
       <Header />
       
-      <main className="flex-1 bg-gray-50">
-        <div className="container py-8">
+      <main className="flex-1">
+        <div className="container py-10 sm:py-14">
           <div className="mx-auto max-w-2xl">
-            <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                Verifica a tua elegibilidade
+            <div className="mb-8 text-center">
+              <p className="section-eyebrow">Verificação de elegibilidade</p>
+              <h1 className="mt-3 text-2xl font-bold sm:text-3xl">
+                Vê a que apoios te podes candidatar
               </h1>
-              <p className="mt-2 text-gray-600">
-                Responde a algumas perguntas simples para descobrires a que apoios te podes candidatar.
+              <p className="mt-2 text-muted-foreground">
+                Quatro perguntas simples. Sem registo, sem compromisso.
               </p>
             </div>
 

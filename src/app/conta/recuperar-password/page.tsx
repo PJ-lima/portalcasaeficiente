@@ -44,7 +44,7 @@ export default function RecuperarPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+    <main className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3">
@@ -55,13 +55,13 @@ export default function RecuperarPasswordPage() {
               height={56}
               className="rounded-lg object-cover w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
             />
-            <span className="text-xl font-bold text-gray-900">Casa Eficiente</span>
+            <span className="text-xl font-bold text-ink">Casa Eficiente</span>
           </Link>
         </div>
 
-        <div className="bg-white shadow-lg rounded-2xl p-8">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Recuperar password</h1>
-          <p className="text-sm text-gray-600 mb-6">
+        <div className="border border-border bg-card shadow-card rounded-2xl p-8">
+          <h1 className="text-2xl font-semibold text-ink mb-2">Recuperar password</h1>
+          <p className="text-sm text-muted-foreground mb-6">
             Introduza o seu email para receber o link de redefinicao.
           </p>
 
@@ -72,14 +72,14 @@ export default function RecuperarPasswordPage() {
           )}
 
           {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            <div className="mb-4 p-3 bg-success-50 border border-success-200 rounded-lg text-success-700 text-sm">
               {success}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-ink mb-1">
                 Email
               </label>
               <input
@@ -87,7 +87,7 @@ export default function RecuperarPasswordPage() {
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-input bg-card rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="seu@email.pt"
                 required
               />
@@ -96,7 +96,7 @@ export default function RecuperarPasswordPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 px-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? 'A enviar...' : 'Enviar link de recuperacao'}
             </button>
