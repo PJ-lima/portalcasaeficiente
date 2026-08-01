@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint .",
     "db:migrate": "echo \"Use db:migrate:dev (dev) ou db:migrate:deploy (deploy).\" && exit 1",
@@ -17,8 +18,11 @@
     "worker:ingest": "tsx src/workers/ingest.ts",
     "worker:dr": "tsx src/workers/diario-republica.ts",
     "worker:fundo": "tsx src/workers/fundo-ambiental.ts",
-    "worker:nacional": "tsx src/workers/national-canonical.ts all",
-    "worker:municipios": "tsx src/workers/municipal-discovery.ts"
+    "worker:nacional": "tsx src/workers/ingest.ts core-nacional",
+    "worker:municipios": "tsx src/workers/municipal-discovery.ts",
+    "env:check": "node --import tsx scripts/check-env.ts",
+    "env:check:staging": "node --import tsx scripts/check-env.ts --mode=staging",
+    "env:check:prod": "node --import tsx scripts/check-env.ts --mode=production"
   },
   "dependencies": {
     "@auth/core": "^0.34.3",

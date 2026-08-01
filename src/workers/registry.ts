@@ -29,6 +29,7 @@ export type DirectIngestSourceId =
   | 'balcao-dos-fundos'
   | 'portal-habitacao-ihru'
   | 'dgeg-apoios-energia'
+  | 'adene-casa-mais'
   | 'diario-republica'
   | 'municipios-portugal'
   | 'cascais';
@@ -80,6 +81,12 @@ const DIRECT_SOURCE_DESCRIPTORS: SourceDescriptor[] = [
     description: 'Metaportal de apoios na energia.',
   },
   {
+    id: 'adene-casa-mais',
+    name: 'ADENE / casA+',
+    type: 'NATIONAL',
+    description: 'Discovery de incentivos e soluções de eficiência.',
+  },
+  {
     id: 'diario-republica',
     name: 'Diário da República',
     type: 'LEGAL_BACKSTOP',
@@ -110,6 +117,7 @@ const NATIONAL_DIRECT_IDS: DirectIngestSourceId[] = [
   'balcao-dos-fundos',
   'portal-habitacao-ihru',
   'dgeg-apoios-energia',
+  'adene-casa-mais',
   'diario-republica',
 ];
 
@@ -122,6 +130,7 @@ const DIRECT_WORKERS: Record<DirectIngestSourceId, WorkerFn> = {
   'balcao-dos-fundos': () => ingestNationalSource('balcao-dos-fundos'),
   'portal-habitacao-ihru': () => ingestNationalSource('portal-habitacao-ihru'),
   'dgeg-apoios-energia': () => ingestNationalSource('dgeg-apoios-energia'),
+  'adene-casa-mais': () => ingestNationalSource('adene-casa-mais'),
   'diario-republica': ingestDiarioRepublica,
   'municipios-portugal': ingestMunicipalDiscovery,
   'cascais': ingestCascais,
