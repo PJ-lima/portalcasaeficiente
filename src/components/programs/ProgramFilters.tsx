@@ -3,14 +3,20 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
+import { programDomainLabels } from '@/lib/utils';
 
 interface ProgramFiltersProps {
   searchParams: {
     concelhoId?: string;
     status?: string | string[];
     programType?: string;
+    domain?: string;
     q?: string;
   };
+  /// Domínios efetivamente presentes na base. O seletor só aparece quando há
+  /// mais do que um — enquanto o inventário for só eficiência energética,
+  /// mostrar um filtro com uma opção seria ruído.
+  availableDomains?: string[];
 }
 
 const STATUS_OPTIONS = [
@@ -18,6 +24,10 @@ const STATUS_OPTIONS = [
   { value: 'PLANNED', label: 'A anunciar' },
   { value: 'UNKNOWN', label: 'Sem data pública' },
   { value: 'CLOSED', label: 'Fechado' },
+  { value: 'EXHAUSTED', label: 'Dotação esgotada' },
+  { value: 'PAYMENTS_DELAYED', label: 'Pagamentos em atraso' },
+  { value: 'SUSPENDED', label: 'Suspenso' },
+  { value: 'CANCELLED', label: 'Cancelado' },
 ];
 
 const PROGRAM_TYPE_OPTIONS = [
@@ -25,7 +35,7 @@ const PROGRAM_TYPE_OPTIONS = [
   { value: 'MUNICIPAL', label: 'Municipal' },
 ];
 
-export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
+export function ProgramFilters({ searchParams, availableDomains = [] }: ProgramFiltersProps) {
   const router = useRouter();
   const currentParams = useSearchParams();
   const [searchText, setSearchText] = useState(searchParams.q || '');
@@ -68,7 +78,11 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
     ? [searchParams.status]
     : searchParams.status || [];
 
-  const hasFilters = selectedStatuses.length > 0 || searchParams.programType || searchParams.q;
+  const hasFilters =
+    selectedStatuses.length > 0 ||
+    searchParams.programType ||
+    searchParams.domain ||
+    searchParams.q;
 
   return (
     <div className="space-y-6">
@@ -145,6 +159,30 @@ export function ProgramFilters({ searchParams }: ProgramFiltersProps) {
           ))}
         </div>
       </div>
+
+      {/* Domínio */}
+      {availableDomains.length > 1 && (
+        <div>
+          <h3 className="text-sm font-medium text-ink mb-3">Tipo de apoio</h3>
+          <div className="flex flex-wrap gap-2">
+            {availableDomains.map((domain) => (
+              <button
+                key={domain}
+                onClick={() =>
+                  updateFilters('domain', searchParams.domain === domain ? null : domain)
+                }
+                className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                  searchParams.domain === domain
+                    ? 'border-primary bg-primary-50 font-medium text-primary'
+                    : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                {programDomainLabels[domain] ?? domain}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Status */}
       <div>

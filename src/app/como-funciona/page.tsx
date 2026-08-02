@@ -99,6 +99,23 @@ export default function ComoFuncionaPage() {
                 <div className="flex gap-4">
                   <XCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
                   <div>
+                    <h3 className="font-semibold text-ink">
+                      Não decidimos quem recebe, nem quando o Estado paga
+                    </h3>
+                    <p className="mt-1 text-muted-foreground">
+                      Ser considerado elegível não garante receber apoio: já houve
+                      programas encerrados com milhares de candidaturas elegíveis por
+                      atribuir. O que fazemos é mostrar-te o estado real de cada apoio —
+                      incluindo quando a dotação está esgotada ou há pagamentos em atraso
+                      — para não perderes tempo com uma candidatura sem verba do outro
+                      lado.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <XCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
+                  <div>
                     <h3 className="font-semibold text-ink">Não vendemos obras</h3>
                     <p className="mt-1 text-muted-foreground">
                       Não fazemos instalações, não vendemos equipamentos, 

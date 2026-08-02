@@ -4,12 +4,14 @@ import { Footer } from '@/components/layout/Footer';
 import { ProgramList } from '@/components/programs/ProgramList';
 import { ProgramFilters } from '@/components/programs/ProgramFilters';
 import { ConcelhoSearchBar } from '@/components/search/ConcelhoSearchBar';
+import { prisma } from '@/lib/prisma';
 
 interface PageProps {
   searchParams: Promise<{
     concelhoId?: string;
     status?: string | string[];
     programType?: string;
+    domain?: string;
     q?: string;
     page?: string;
   }>;
@@ -18,6 +20,13 @@ interface PageProps {
 export default async function ApoiosPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const concelhoId = params.concelhoId;
+
+  // Só oferecemos o filtro de domínio quando há mais do que um na base.
+  const domainGroups = await prisma.program.groupBy({
+    by: ['domain'],
+    _count: { _all: true },
+  });
+  const availableDomains = domainGroups.map((group) => group.domain);
 
   return (
     <>
@@ -53,7 +62,7 @@ export default async function ApoiosPage({ searchParams }: PageProps) {
             {/* Filtros (sidebar) */}
             <aside className="w-full lg:w-64 flex-shrink-0">
               <div className="sticky top-24">
-                <ProgramFilters searchParams={params} />
+                <ProgramFilters searchParams={params} availableDomains={availableDomains} />
               </div>
             </aside>
 

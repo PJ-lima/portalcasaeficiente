@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { withRlsContext } from '@/lib/prisma-rls';
+import {
+  evaluateEligibility,
+  normalizeProgramRules,
+  type EligibilityCheck,
+} from '@/lib/eligibility-engine';
 
 /**
  * GET /api/eligibility/recommendations
@@ -86,19 +91,50 @@ export async function GET() {
       };
     };
 
-    // Mock evaluation - TODO: implementar avaliação real com eligibility-engine.ts
+    // Avaliação a partir do dossiê do utilizador, com o mesmo motor usado em
+    // /api/eligibility/check. O dossiê não guarda regime de propriedade, por
+    // isso enviamos vazio: regras que dependam disso ficam por confirmar em
+    // vez de darem falso positivo.
+    const userData: EligibilityCheck = {
+      concelhoId: userDossier.concelhoId ?? '',
+      propertyType: userDossier.propertyType ?? '',
+      ownershipType: '',
+      buildingYear: userDossier.buildingYear ?? undefined,
+      householdSize: userDossier.householdSize ?? undefined,
+      annualIncome: userDossier.annualIncome
+        ? Number(userDossier.annualIncome)
+        : undefined,
+      socialTariff: userDossier.hasSocialTariff ?? undefined,
+    };
+
     const evaluations: RecommendationItem[] = programs.map((program) => {
-      // Score simplificado baseado em tipo de programa
-      let score = 50;
-      let result: RecommendationResult = 'MAYBE';
-      
-      if (program.programType === 'NATIONAL') {
-        score = 75;
-        result = 'ELIGIBLE';
-      } else if (program.programType === 'MUNICIPAL') {
-        score = 60;
-        result = 'MAYBE';
-      }
+      const rules = normalizeProgramRules(program.versions[0]?.rulesJson);
+
+      // Sem regras publicadas não podemos dizer "és elegível" — dizê-lo seria
+      // criar uma expectativa que a entidade não confirmou.
+      const evaluation =
+        rules.length === 0
+          ? {
+              result: 'MAYBE' as RecommendationResult,
+              score: 50,
+              summary:
+                'Ainda não temos as condições deste apoio em formato verificável. Confirma na fonte oficial.',
+              evaluations: [] as unknown[],
+            }
+          : (() => {
+              const evaluated = evaluateEligibility(
+                program.id,
+                program.title,
+                rules,
+                userData,
+              );
+              return {
+                result: evaluated.result as RecommendationResult,
+                score: evaluated.score,
+                summary: evaluated.summary,
+                evaluations: evaluated.evaluations as unknown[],
+              };
+            })();
 
       return {
         program: {
@@ -112,12 +148,7 @@ export async function GET() {
           officialUrl: program.officialUrl,
           geographies: program.geographies,
         },
-        evaluation: {
-          result,
-          score,
-          summary: `Programa ${result === 'ELIGIBLE' ? 'recomendado' : 'possível'} com base no seu perfil.`,
-          evaluations: [],
-        },
+        evaluation,
       };
     });
 

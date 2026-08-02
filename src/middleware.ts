@@ -8,6 +8,7 @@ const protectedRoutes = [
   '/conta/dossier',
   '/conta/recomendacoes',
   '/conta/favoritos',
+  '/conta/notificacoes',
 ];
 
 // Routes that require admin role
@@ -39,6 +40,7 @@ export const config = {
     '/conta/dossier/:path*',
     '/conta/recomendacoes/:path*',
     '/conta/favoritos/:path*',
+    '/conta/notificacoes/:path*',
     '/admin/:path*',
   ],
 };

@@ -111,10 +111,30 @@ export const programStatusLabels: Record<string, string> = {
   CLOSED: 'Fechado',
   PLANNED: 'A anunciar',
   UNKNOWN: 'Sem data pública',
+  EXHAUSTED: 'Dotação esgotada',
+  SUSPENDED: 'Suspenso',
+  CANCELLED: 'Cancelado',
+  PAYMENTS_DELAYED: 'Pagamentos em atraso',
   DRAFT: 'Rascunho',
   PUBLISHED: 'Publicado',
-  SUSPENDED: 'Suspenso',
   ARCHIVED: 'Arquivado',
+};
+
+/**
+ * O que o estado significa em português de quem está à espera do dinheiro.
+ * Existe porque "fechado" e "dotação esgotada" são a mesma coisa para o
+ * regulamento e coisas muito diferentes para quem se candidatou.
+ */
+export const programStatusExplanations: Record<string, string> = {
+  OPEN: 'Aceita candidaturas neste momento.',
+  CLOSED: 'O prazo de candidaturas terminou.',
+  PLANNED: 'Já foi anunciado, mas ainda não abriu candidaturas.',
+  UNKNOWN: 'Não há informação pública fiável sobre o estado.',
+  EXHAUSTED:
+    'A verba já está toda comprometida. Ser considerado elegível não garante receber apoio.',
+  SUSPENDED: 'Está temporariamente parado.',
+  CANCELLED: 'Terminou antes do previsto, sem substituição imediata.',
+  PAYMENTS_DELAYED: 'Foi atribuído, mas há pagamentos por regularizar.',
 };
 
 // Cores de estado
@@ -123,10 +143,39 @@ export const programStatusColors: Record<string, string> = {
   CLOSED: 'bg-red-100 text-red-800',
   PLANNED: 'bg-amber-100 text-amber-800',
   UNKNOWN: 'bg-slate-100 text-slate-700',
+  EXHAUSTED: 'bg-orange-100 text-orange-800',
+  SUSPENDED: 'bg-yellow-100 text-yellow-800',
+  CANCELLED: 'bg-red-100 text-red-900',
+  PAYMENTS_DELAYED: 'bg-orange-100 text-orange-900',
   DRAFT: 'bg-gray-100 text-gray-800',
   PUBLISHED: 'bg-blue-100 text-blue-800',
-  SUSPENDED: 'bg-yellow-100 text-yellow-800',
   ARCHIVED: 'bg-gray-100 text-gray-600',
+};
+
+/**
+ * Estados em que o utilizador não deve contar com o dinheiro, mesmo que a
+ * página oficial ainda esteja no ar. Usado para avisar antes de alguém
+ * investir tempo numa candidatura.
+ */
+export const cautionaryProgramStatuses = [
+  'EXHAUSTED',
+  'SUSPENDED',
+  'CANCELLED',
+  'PAYMENTS_DELAYED',
+] as const;
+
+export function isCautionaryStatus(status: string): boolean {
+  return (cautionaryProgramStatuses as readonly string[]).includes(status);
+}
+
+// Tradução de domínios de apoio
+export const programDomainLabels: Record<string, string> = {
+  ENERGY_EFFICIENCY: 'Eficiência energética',
+  RENOVATION: 'Reabilitação',
+  HOUSING_ACCESS: 'Acesso à habitação',
+  TAX_BENEFIT: 'Benefício fiscal',
+  SOCIAL: 'Apoio social',
+  OTHER: 'Outro',
 };
 
 // Tradução de resultados de elegibilidade

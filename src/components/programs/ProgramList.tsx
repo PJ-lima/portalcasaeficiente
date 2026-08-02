@@ -3,19 +3,19 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { withRlsContext } from '@/lib/prisma-rls';
 import { 
-  programStatusLabels,
-  programStatusColors,
   formatRelativeDaysFromNow,
 } from '@/lib/utils';
-import { Prisma, ProgramStatus, ProgramType } from '@prisma/client';
+import { Prisma, ProgramDomain, ProgramStatus, ProgramType } from '@prisma/client';
 import { ChevronRight } from 'lucide-react';
 import { SaveProgramButton } from './SaveProgramButton';
+import { ProgramStatusBadge } from './ProgramStatusBadge';
 
 interface ProgramListProps {
   searchParams: {
     concelhoId?: string;
     status?: string | string[];
     programType?: string;
+    domain?: string;
     q?: string;
     page?: string;
   };
@@ -28,20 +28,32 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
   const concelhoId = searchParams.concelhoId;
   const statusParam = searchParams.status;
   const programType = searchParams.programType;
+  const domain = searchParams.domain;
   const searchQuery = searchParams.q;
   
   // Construir filtro base
   const where: Prisma.ProgramWhereInput = {};
   
-  // Filtro por status
+  // Filtro por status — só valores do enum, para um query string inválido não
+  // rebentar a página inteira.
   if (statusParam) {
-    const statuses = Array.isArray(statusParam) ? statusParam : [statusParam];
-    where.status = { in: statuses as ProgramStatus[] };
+    const requested = Array.isArray(statusParam) ? statusParam : [statusParam];
+    const statuses = requested.filter(
+      (value): value is ProgramStatus => value in ProgramStatus
+    );
+    if (statuses.length > 0) {
+      where.status = { in: statuses };
+    }
   }
   
   // Filtro por tipo de programa
   if (programType && (programType === 'NATIONAL' || programType === 'MUNICIPAL')) {
     where.programType = programType as ProgramType;
+  }
+
+  // Filtro por domínio
+  if (domain && domain in ProgramDomain) {
+    where.domain = domain as ProgramDomain;
   }
   
   // Filtro por texto (título ou entidade)
@@ -207,9 +219,7 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
                   <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     Estado do apoio
                   </p>
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${programStatusColors[program.status] || 'bg-muted'}`}>
-                    {programStatusLabels[program.status] || program.status}
-                  </span>
+                  <ProgramStatusBadge status={program.status} />
                   <p className="text-xs text-muted-foreground">
                     Última verificação: {formatRelativeDaysFromNow(latestVerificationDate)}
                   </p>

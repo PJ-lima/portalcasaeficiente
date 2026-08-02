@@ -217,6 +217,19 @@ export default function SobrePage() {
                       Quando um programa não tem informação pública suficiente para confirmar datas/estado,
                       assinalamos isso claramente.
                     </p>
+                    <h3 className="mt-6 text-lg font-semibold text-ink">O que não controlamos</h3>
+                    <p className="mt-3 text-muted-foreground leading-relaxed">
+                      Não decidimos quem recebe apoio, nem quando o Estado paga. Já
+                      aconteceu um programa ser encerrado com dezenas de milhares de
+                      candidaturas consideradas elegíveis e sem apoio atribuído — ser
+                      elegível não é o mesmo que receber.
+                    </p>
+                    <p className="mt-3 text-muted-foreground leading-relaxed">
+                      Por isso mostramos o estado real de cada apoio, incluindo quando a
+                      dotação está esgotada, quando está suspenso ou quando há pagamentos
+                      em atraso. Preferimos dar-te uma má notícia cedo do que uma
+                      expectativa que não se cumpre.
+                    </p>
                     <h3 className="mt-6 text-lg font-semibold text-ink">Alertas e privacidade</h3>
                     <p className="mt-3 text-muted-foreground leading-relaxed">
                       Estamos a preparar notificações para reduzir o fator sorte: alertas quando há um

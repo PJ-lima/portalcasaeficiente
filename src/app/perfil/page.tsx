@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { FileText, Users, Home, Heart, Settings, ArrowRight, User, Mail, CreditCard, MapPin } from 'lucide-react';
+import { FileText, Users, Home, Heart, Settings, ArrowRight, User, Mail, CreditCard, MapPin, BellRing } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 
@@ -313,12 +313,20 @@ export default function PerfilPage() {
               <span className="text-sm font-medium text-ink group-hover:text-purple-700">Explorar Apoios</span>
             </Link>
 
-            <Link 
-              href="/conta/favoritos" 
+            <Link
+              href="/conta/favoritos"
               className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-red-300 hover:bg-red-50 transition group"
             >
               <Heart className="h-5 w-5 text-muted-foreground group-hover:text-red-600" />
               <span className="text-sm font-medium text-ink group-hover:text-red-700">Ver Favoritos</span>
+            </Link>
+
+            <Link
+              href="/conta/notificacoes"
+              className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-primary-300 hover:bg-primary-50 transition group"
+            >
+              <BellRing className="h-5 w-5 text-muted-foreground group-hover:text-primary-600" />
+              <span className="text-sm font-medium text-ink group-hover:text-primary-700">Alertas de Apoios</span>
             </Link>
             
             <Link 

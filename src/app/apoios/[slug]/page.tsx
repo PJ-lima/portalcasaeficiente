@@ -6,12 +6,15 @@ import { withRlsContext } from '@/lib/prisma-rls';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { SaveProgramButton } from '@/components/programs/SaveProgramButton';
-import { 
-  programStatusLabels,
-  programStatusColors,
+import { ProgramStatusBadge } from '@/components/programs/ProgramStatusBadge';
+import { ProgramStatusTimeline } from '@/components/programs/ProgramStatusTimeline';
+import {
+  formatCurrency,
   formatRelativeDaysFromNow,
+  isCautionaryStatus,
+  programStatusExplanations,
 } from '@/lib/utils';
-import { ArrowLeft, ExternalLink, CheckCircle2, MapPin, Landmark, Building2, Lightbulb } from 'lucide-react';
+import { ArrowLeft, ExternalLink, CheckCircle2, MapPin, Landmark, Building2, Lightbulb, AlertTriangle } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -30,6 +33,10 @@ export default async function ProgramDetailPage({ params }: PageProps) {
         take: 1,
       },
       sources: true,
+      statusEvents: {
+        orderBy: { detectedAt: 'desc' },
+        take: 10,
+      },
     },
   });
 
@@ -66,8 +73,21 @@ export default async function ProgramDetailPage({ params }: PageProps) {
       if (!source.fetchedAt) return latestDate;
       return source.fetchedAt > latestDate ? source.fetchedAt : latestDate;
     },
-    program.updatedAt
+    program.lastVerifiedAt ?? program.updatedAt
   );
+
+  const needsCaution = isCautionaryStatus(program.status);
+  const statusExplanation =
+    program.statusNote ?? programStatusExplanations[program.status] ?? null;
+
+  const budgetTotal = program.budgetTotal ? Number(program.budgetTotal) : null;
+  const budgetCommitted = program.budgetCommitted
+    ? Number(program.budgetCommitted)
+    : null;
+  const committedPercent =
+    budgetTotal && budgetTotal > 0 && budgetCommitted !== null
+      ? Math.min(100, Math.round((budgetCommitted / budgetTotal) * 100))
+      : null;
 
   return (
     <>
@@ -97,9 +117,11 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                     <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                       Estado do apoio
                     </p>
-                    <span className={`mt-1 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${programStatusColors[program.status] || 'bg-muted'}`}>
-                      {programStatusLabels[program.status] || program.status}
-                    </span>
+                    <ProgramStatusBadge
+                      status={program.status}
+                      size="md"
+                      className="mt-1"
+                    />
                   </div>
                   <span className="text-sm font-semibold uppercase tracking-wide text-primary">
                     {program.programType === 'NATIONAL' ? 'Nacional' : 'Municipal'}
@@ -112,6 +134,18 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                 <p className="mt-1 text-xs text-muted-foreground">
                   Mostramos &ldquo;Aberto&rdquo; quando a fonte oficial indica datas ou estado ativo. Se não houver datas públicas, marcamos como &ldquo;Sem data pública&rdquo;.
                 </p>
+
+                {needsCaution && statusExplanation && (
+                  <div className="mt-4 flex max-w-xl items-start gap-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
+                    <AlertTriangle
+                      className="mt-0.5 h-5 w-5 shrink-0 text-orange-700"
+                      aria-hidden="true"
+                    />
+                    <p className="text-sm leading-6 text-orange-900">
+                      {statusExplanation}
+                    </p>
+                  </div>
+                )}
                 
                 <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
                   {program.title}
@@ -172,6 +206,86 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                   </p>
                 </section>
               )}
+
+              {/* Estado real do apoio — a informação que nenhuma fonte oficial agrega */}
+              <section className="rounded-xl border border-border bg-card p-6 shadow-card">
+                <h2 className="text-xl font-semibold text-ink">Estado real deste apoio</h2>
+
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <ProgramStatusBadge status={program.status} size="md" />
+                  <span className="text-xs text-muted-foreground">
+                    Verificado {formatRelativeDaysFromNow(latestVerificationDate)}
+                  </span>
+                </div>
+
+                {statusExplanation && (
+                  <p className="mt-3 leading-relaxed text-muted-foreground">
+                    {statusExplanation}
+                  </p>
+                )}
+
+                {budgetTotal !== null && (
+                  <div className="mt-6">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
+                      <span className="font-medium text-ink">Dotação do programa</span>
+                      <span className="text-muted-foreground">
+                        {budgetCommitted !== null
+                          ? `${formatCurrency(budgetCommitted)} comprometidos de ${formatCurrency(budgetTotal)}`
+                          : formatCurrency(budgetTotal)}
+                      </span>
+                    </div>
+
+                    {committedPercent !== null && (
+                      <>
+                        <div
+                          className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
+                          role="progressbar"
+                          aria-valuenow={committedPercent}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-label="Percentagem da dotação comprometida"
+                        >
+                          <div
+                            className={`h-full rounded-full ${
+                              committedPercent >= 100 ? 'bg-orange-500' : 'bg-primary'
+                            }`}
+                            style={{ width: `${committedPercent}%` }}
+                          />
+                        </div>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          {committedPercent}% da verba já está comprometida.
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {program.statusSourceUrl && (
+                  <a
+                    href={program.statusSourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  >
+                    Fonte desta informação
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+
+                {program.statusEvents.length > 0 && (
+                  <div className="mt-6 border-t border-border pt-6">
+                    <h3 className="text-sm font-semibold text-ink">Histórico</h3>
+                    <div className="mt-4">
+                      <ProgramStatusTimeline events={program.statusEvents} />
+                    </div>
+                  </div>
+                )}
+
+                <p className="mt-6 text-xs leading-5 text-muted-foreground">
+                  Acompanhamos o estado a partir das fontes oficiais, mas não
+                  controlamos as decisões nem os pagamentos do Estado.
+                </p>
+              </section>
 
               {/* O que precisas (placeholder) */}
               <section className="rounded-xl border border-border bg-card p-6 shadow-card">

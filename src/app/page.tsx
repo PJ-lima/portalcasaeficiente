@@ -69,14 +69,15 @@ const features = [
   },
   {
     icon: CalendarClock,
-    title: 'Estado sempre visível',
+    title: 'Estado real, sem rodeios',
     description:
-      'Aberto, fechado, a anunciar ou sem data pública — e as datas, quando existem.',
+      'Aberto, fechado, dotação esgotada, suspenso ou com pagamentos em atraso — com a data da última verificação.',
   },
   {
     icon: BellRing,
     title: 'Alertas de novos apoios',
-    description: 'Aviso quando surge um apoio novo no teu concelho. Sem spam.',
+    description:
+      'Aviso quando abre um apoio no teu concelho. Há verbas que esgotam em dias.',
     badge: 'Em breve',
   },
   {
@@ -134,17 +135,17 @@ export default function HomePage() {
                   Apoios do Estado e da tua câmara, num só sítio
                 </p>
                 <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl md:text-[3.4rem]">
-                  A tua casa pode subir de{' '}
+                  Há{' '}
                   <span className="label-tag inline-block bg-success px-3 text-success-foreground">
-                    classe
+                    dinheiro
                   </span>{' '}
-                  com ajuda pública
+                  do Estado para obras na tua casa
                 </h1>
 
                 <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
-                  Encontramos os apoios abertos para obras de eficiência
-                  energética, explicamos em português simples e dizemos-te se
-                  vale a pena candidatares-te — sem horas perdidas em PDFs.
+                  Dizemos-te quais os apoios que existem para o teu concelho, se
+                  tens direito, e — o que ninguém te diz — se ainda há verba.
+                  Sem horas perdidas em PDFs.
                 </p>
 
                 {/* Search Box */}
@@ -200,8 +201,9 @@ export default function HomePage() {
                   <div className="mt-6 rounded-lg bg-primary-50 p-4">
                     <p className="text-sm leading-6 text-primary-800">
                       Janelas, isolamento, bomba de calor ou painéis solares:
-                      há apoios que pagam parte da obra. Começa por ver os que
-                      estão abertos no teu concelho.
+                      há apoios que pagam parte da obra e baixam a fatura todos
+                      os meses. Começa por ver os que estão abertos no teu
+                      concelho.
                     </p>
                   </div>
                 </div>

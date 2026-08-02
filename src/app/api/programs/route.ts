@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import { Prisma, ProgramStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-type ProgramStatusFilter = "OPEN" | "PLANNED" | "CLOSED" | "UNKNOWN";
+type ProgramStatusFilter = ProgramStatus;
 
 function isProgramStatusFilter(value: string): value is ProgramStatusFilter {
-  return (["OPEN", "PLANNED", "CLOSED", "UNKNOWN"] as const).includes(
-    value as ProgramStatusFilter
-  );
+  return value in ProgramStatus;
 }
 
 export async function GET(req: Request) {
