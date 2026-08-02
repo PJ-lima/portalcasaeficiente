@@ -88,3 +88,69 @@ export async function sendPasswordResetEmail(params: PasswordResetEmailParams): 
     throw new Error(`Failed to send password reset email: ${response.status} ${errorBody}`);
   }
 }
+
+export type NotificationEmailParams = {
+  to: string;
+  subject: string;
+  heading: string;
+  body: string;
+  ctaLabel: string;
+  ctaUrl: string;
+  footnote?: string;
+};
+
+export async function sendNotificationEmail(
+  params: NotificationEmailParams,
+): Promise<void> {
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
+  const emailFrom = process.env.EMAIL_FROM?.trim();
+
+  if (!resendApiKey || !emailFrom) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.info(`[notify] ${params.to}: ${params.subject} -> ${params.ctaUrl}`);
+      return;
+    }
+
+    throw new Error('Email provider is not configured (RESEND_API_KEY/EMAIL_FROM).');
+  }
+
+  const html = `
+    <h2>${escapeHtml(params.heading)}</h2>
+    <p>${escapeHtml(params.body)}</p>
+    <p>
+      <a href="${escapeHtml(params.ctaUrl)}" style="background:#2563eb;color:#ffffff;padding:10px 16px;border-radius:8px;text-decoration:none;display:inline-block;">
+        ${escapeHtml(params.ctaLabel)}
+      </a>
+    </p>
+    ${params.footnote ? `<p style="color:#64748b;font-size:12px;">${escapeHtml(params.footnote)}</p>` : ''}
+  `;
+
+  const text = [
+    params.heading,
+    '',
+    params.body,
+    '',
+    `${params.ctaLabel}: ${params.ctaUrl}`,
+    ...(params.footnote ? ['', params.footnote] : []),
+  ].join('\n');
+
+  const response = await fetch(RESEND_API_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: emailFrom,
+      to: [params.to],
+      subject: params.subject,
+      html,
+      text,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Failed to send notification email: ${response.status} ${errorBody}`);
+  }
+}

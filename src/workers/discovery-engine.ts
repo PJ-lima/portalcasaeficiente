@@ -5,6 +5,8 @@ import { prisma } from '../lib/prisma';
 import { slugify } from '../lib/utils';
 import type { CanonicalSourceDefinition } from './canonical-sources';
 import { calculateContentHash, normalizeText, WorkerLogger } from '../lib/worker-utils';
+import { withIngestionRun } from '../lib/ingestion';
+import { queueNewProgramNotifications } from '../lib/notifications';
 import { 
   crawlPageForDetails, 
   shouldBlockTitle, 
@@ -515,6 +517,7 @@ async function persistCandidate(params: {
       summary: candidate.description?.slice(0, 3000) ?? null,
       entity,
       programType,
+      domain: source.domain,
       status,
       officialUrl: candidate.url,
       geographies: {
@@ -539,7 +542,7 @@ async function persistCandidate(params: {
         },
       },
     },
-    select: { id: true },
+    select: { id: true, slug: true, title: true, domain: true, status: true },
   });
 
   await prisma.programVersion.create({
@@ -554,6 +557,26 @@ async function persistCandidate(params: {
     },
   });
 
+  // Estado inicial no histórico, para a timeline não começar vazia.
+  await prisma.programStatusEvent.create({
+    data: {
+      programId: created.id,
+      status,
+      sourceUrl: candidate.url,
+      detectedBy: `worker:${source.id}`,
+    },
+  });
+
+  // Um apoio novo só vale se chegar a quem o pode usar antes de a verba acabar.
+  try {
+    await queueNewProgramNotifications(
+      created,
+      candidate.municipalityName ? [candidate.municipalityName] : [],
+    );
+  } catch (error) {
+    logger.error('Falha ao enfileirar notificações do programa novo', error);
+  }
+
   logger.success('Programa descoberto e criado', {
     source: source.id,
     title: candidate.title,
@@ -563,7 +586,29 @@ async function persistCandidate(params: {
   return 'new';
 }
 
+type CanonicalWorkerOptions = {
+  seedUrls?: readonly string[];
+  keywords?: readonly string[];
+  loggerContext?: string;
+  rateLimitMs?: number;
+  overrideProgramType?: ProgramType;
+  overrideEntity?: string;
+  allowedHosts?: readonly string[];
+  requireApplicationIntent?: boolean;
+};
+
+/**
+ * Executa o worker canónico e regista a execução num `IngestionRun`.
+ * Sem isto uma fonte podia estar partida durante semanas sem deixar rasto.
+ */
 export async function runCanonicalSourceWorker(
+  source: CanonicalSourceDefinition,
+  options?: CanonicalWorkerOptions,
+): Promise<WorkerRunResult> {
+  return withIngestionRun(source.id, () => runCanonicalSourceWorkerInner(source, options));
+}
+
+async function runCanonicalSourceWorkerInner(
   source: CanonicalSourceDefinition,
   options?: {
     seedUrls?: readonly string[];

@@ -3,6 +3,7 @@ import { ingest as ingestDiarioRepublica } from './diario-republica';
 import { ingest as ingestFundoAmbiental } from './fundo-ambiental';
 import { ingest as ingestCascais } from './cascais';
 import { ingestMunicipalDiscovery } from './municipal-discovery';
+import { ingestFundoAmbientalStatus } from './fundo-ambiental-status';
 import { ingestNationalSource } from './national-canonical';
 
 export interface NormalizedIngestStats {
@@ -24,10 +25,12 @@ export interface NormalizedIngestResult {
 
 export type DirectIngestSourceId =
   | 'fundo-ambiental'
+  | 'fundo-ambiental-status'
   | 'recuperar-portugal'
   | 'portugal-2030'
   | 'balcao-dos-fundos'
   | 'portal-habitacao-ihru'
+  | 'ifrru-reabilitacao'
   | 'dgeg-apoios-energia'
   | 'adene-casa-mais'
   | 'diario-republica'
@@ -49,6 +52,12 @@ const DIRECT_SOURCE_DESCRIPTORS: SourceDescriptor[] = [
     name: 'Fundo Ambiental',
     type: 'NATIONAL',
     description: 'Avisos e candidaturas do Fundo Ambiental.',
+  },
+  {
+    id: 'fundo-ambiental-status',
+    name: 'Fundo Ambiental — situação das candidaturas',
+    type: 'NATIONAL',
+    description: 'Snapshots das tabelas públicas de situação das candidaturas.',
   },
   {
     id: 'recuperar-portugal',
@@ -73,6 +82,12 @@ const DIRECT_SOURCE_DESCRIPTORS: SourceDescriptor[] = [
     name: 'Portal da Habitação / IHRU',
     type: 'NATIONAL',
     description: 'Programas habitacionais nacionais.',
+  },
+  {
+    id: 'ifrru-reabilitacao',
+    name: 'IFRRU — Reabilitação Urbana',
+    type: 'NATIONAL',
+    description: 'Financiamento à reabilitação de edifícios e eficiência energética.',
   },
   {
     id: 'dgeg-apoios-energia',
@@ -112,10 +127,12 @@ export type IngestSourceId = DirectIngestSourceId | SourceGroupId;
 
 const NATIONAL_DIRECT_IDS: DirectIngestSourceId[] = [
   'fundo-ambiental',
+  'fundo-ambiental-status',
   'recuperar-portugal',
   'portugal-2030',
   'balcao-dos-fundos',
   'portal-habitacao-ihru',
+  'ifrru-reabilitacao',
   'dgeg-apoios-energia',
   'adene-casa-mais',
   'diario-republica',
@@ -125,10 +142,12 @@ const MUNICIPAL_DIRECT_IDS: DirectIngestSourceId[] = ['municipios-portugal', 'ca
 
 const DIRECT_WORKERS: Record<DirectIngestSourceId, WorkerFn> = {
   'fundo-ambiental': ingestFundoAmbiental,
+  'fundo-ambiental-status': ingestFundoAmbientalStatus,
   'recuperar-portugal': () => ingestNationalSource('recuperar-portugal'),
   'portugal-2030': () => ingestNationalSource('portugal-2030'),
   'balcao-dos-fundos': () => ingestNationalSource('balcao-dos-fundos'),
   'portal-habitacao-ihru': () => ingestNationalSource('portal-habitacao-ihru'),
+  'ifrru-reabilitacao': () => ingestNationalSource('ifrru-reabilitacao'),
   'dgeg-apoios-energia': () => ingestNationalSource('dgeg-apoios-energia'),
   'adene-casa-mais': () => ingestNationalSource('adene-casa-mais'),
   'diario-republica': ingestDiarioRepublica,

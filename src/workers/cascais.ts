@@ -8,7 +8,7 @@
 import { prisma } from '../lib/prisma';
 import { slugify } from '../lib/utils';
 import { calculateContentHash, WorkerLogger } from '../lib/worker-utils';
-import { IngestionLogger } from '../lib/ingestion';
+import { withIngestionRun } from '../lib/ingestion';
 
 const logger = new WorkerLogger('cascais-worker');
 
@@ -36,22 +36,21 @@ const MOCK_PROGRAMS = [
 ];
 
 async function ingest() {
-  const ingestionLogger = new IngestionLogger('cascais');
-  await ingestionLogger.start();
-  
+  return withIngestionRun('cascais', ingestInner);
+}
+
+async function ingestInner() {
   logger.info('Iniciando ingestão de programas de Cascais');
   const startTime = Date.now();
 
   try {
     let newCount = 0;
     let skipCount = 0;
-    const errors: string[] = [];
+    const errors: Array<{ title?: string; url?: string; error: string }> = [];
 
     // Cascais ID (hardcoded for pilot)
     // Em produção seria buscado via: await prisma.concelho.findFirst({ where: { name: 'Cascais' } })
     const concelhoId = 'lisboa-cascais'; 
-
-    await ingestionLogger.updateStats({ itemsFound: MOCK_PROGRAMS.length });
 
     for (const data of MOCK_PROGRAMS) {
       try {
@@ -79,7 +78,6 @@ async function ingest() {
         if (existing) {
           logger.info('Programa já existe (deduplicado)', { slug, contentHash: contentHash.substring(0, 8) });
           skipCount++;
-          await ingestionLogger.updateStats({ itemsSkipped: skipCount });
           continue;
         }
 
@@ -124,13 +122,11 @@ async function ingest() {
 
         logger.success('Programa criado', { title: data.title, id: program.id });
         newCount++;
-        await ingestionLogger.updateStats({ itemsInserted: newCount });
 
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
         logger.error(`Erro ao processar ${data.title}`, error);
-        errors.push(msg);
-        await ingestionLogger.logError(`Erro em ${data.title}: ${msg}`);
+        errors.push({ title: data.title, url: data.url, error: msg });
       }
     }
 
@@ -143,23 +139,21 @@ async function ingest() {
       errors: errors.length
     });
 
-    await ingestionLogger.complete('completed');
-
     return {
       success: true,
       stats: {
         found: MOCK_PROGRAMS.length,
         new: newCount,
+        updated: 0,
         skipped: skipCount,
         errors: errors.length,
         duration
-      }
+      },
+      errors
     };
 
   } catch (error) {
     logger.error('Falha fatal no worker de Cascais', error);
-    await ingestionLogger.logError(error instanceof Error ? error : String(error));
-    await ingestionLogger.complete('failed');
     throw error;
   }
 }

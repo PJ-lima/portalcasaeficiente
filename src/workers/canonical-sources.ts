@@ -1,4 +1,4 @@
-import { ProgramType, SourceType } from '@prisma/client';
+import { ProgramDomain, ProgramType, SourceType } from '@prisma/client';
 
 export type CanonicalSourceId =
   | 'fundo-ambiental'
@@ -6,6 +6,7 @@ export type CanonicalSourceId =
   | 'portugal-2030'
   | 'balcao-dos-fundos'
   | 'portal-habitacao-ihru'
+  | 'ifrru-reabilitacao'
   | 'dgeg-apoios-energia'
   | 'adene-casa-mais'
   | 'portal-autarquico-dgal'
@@ -27,6 +28,10 @@ export interface CanonicalSourceDefinition {
   coverage: SourceCoverage;
   sourceType: SourceType;
   programType: ProgramType;
+  /// Domínio atribuído aos programas desta fonte. Sem isto, apoios à
+  /// habitação ou à reabilitação entrariam catalogados como eficiência
+  /// energética, e os alertas por domínio deixariam de fazer sentido.
+  domain: ProgramDomain;
   seedUrls: readonly string[];
   keywords: readonly string[];
   allowedHosts?: readonly string[];
@@ -160,6 +165,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'NATIONAL',
     sourceType: 'FA',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.ENERGY_EFFICIENCY,
     seedUrls: [
       'https://www.fundoambiental.pt/avisos',
       'https://www.fundoambiental.pt/candidaturas.aspx',
@@ -176,6 +182,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'NATIONAL',
     sourceType: 'OTHER',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.RENOVATION,
     seedUrls: [
       'https://recuperarportugal.gov.pt/candidaturas/',
       'https://recuperarportugal.gov.pt/candidaturas-prr/',
@@ -192,6 +199,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'EU_FUNDS',
     sourceType: 'OTHER',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.RENOVATION,
     seedUrls: [
       'https://portugal2030.pt/avisos/',
       'https://portugal2030.pt/plano-anual-de-avisos/',
@@ -208,6 +216,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'EU_FUNDS',
     sourceType: 'OTHER',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.OTHER,
     seedUrls: [
       'https://balcaofundosue.pt/avisos',
       'https://balcaofundosue.pt/concursos',
@@ -224,12 +233,29 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'HOUSING',
     sourceType: 'OTHER',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.HOUSING_ACCESS,
     seedUrls: [
       'https://www.portaldahabitacao.pt/programas-e-medidas',
       'https://www.portaldahabitacao.pt/candidaturas',
     ],
     keywords: CORE_KEYWORDS,
     allowedHosts: ['portaldahabitacao.pt', 'ihru.pt'],
+    requireApplicationIntent: true,
+  },
+  'ifrru-reabilitacao': {
+    id: 'ifrru-reabilitacao',
+    name: 'IFRRU — Reabilitação Urbana',
+    entity: 'IFRRU 2020 / IHRU',
+    description: 'Financiamento à reabilitação de edifícios e eficiência energética.',
+    coverage: 'HOUSING',
+    sourceType: 'OTHER',
+    programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.RENOVATION,
+    seedUrls: [
+      'https://www.ifrru.pt/',
+    ],
+    keywords: CORE_KEYWORDS,
+    allowedHosts: ['ifrru.pt'],
     requireApplicationIntent: true,
   },
   'dgeg-apoios-energia': {
@@ -240,6 +266,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'ENERGY_META',
     sourceType: 'OTHER',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.ENERGY_EFFICIENCY,
     seedUrls: [
       'https://www.dgeg.gov.pt/pt/areas-setoriais/energia/apoios-na-area-da-energia/',
       'https://www.dgeg.gov.pt/pt/areas-setoriais/energia/apoios-na-area-da-energia/avisos/',
@@ -256,6 +283,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'ENERGY_META',
     sourceType: 'OTHER',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.ENERGY_EFFICIENCY,
     seedUrls: [
       'https://www.adene.pt/',
       'https://casa-mais.pt/',
@@ -272,6 +300,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'MUNICIPAL_INDEX',
     sourceType: 'MUNICIPAL_SITE',
     programType: ProgramType.MUNICIPAL,
+    domain: ProgramDomain.OTHER,
     seedUrls: [
       'https://portalautarquico.dgal.gov.pt/pt-PT/municipios/',
       'https://portalautarquico.dgal.gov.pt/',
@@ -289,6 +318,7 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     coverage: 'LEGAL_BACKSTOP',
     sourceType: 'DR',
     programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.OTHER,
     seedUrls: [
       'https://dre.pt/web/guest/pesquisa',
       'https://dre.pt/',
@@ -305,6 +335,7 @@ export const NATIONAL_SOURCE_IDS: CanonicalSourceId[] = [
   'portugal-2030',
   'balcao-dos-fundos',
   'portal-habitacao-ihru',
+  'ifrru-reabilitacao',
   'dgeg-apoios-energia',
   'adene-casa-mais',
 ];

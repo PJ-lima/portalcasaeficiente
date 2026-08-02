@@ -12,6 +12,7 @@ import * as cheerio from 'cheerio';
 import { ProgramType } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { normalizeText, WorkerLogger } from '../lib/worker-utils';
+import { withIngestionRun } from '../lib/ingestion';
 import { CANONICAL_SOURCES } from './canonical-sources';
 import {
   discoverProgramsFromUrl,
@@ -644,6 +645,10 @@ async function processDocument(
 }
 
 async function ingest(): Promise<WorkerRunResult> {
+  return withIngestionRun('diario-republica', ingestInner);
+}
+
+async function ingestInner(): Promise<WorkerRunResult> {
   const startedAt = Date.now();
   const stats: WorkerRunStats = {
     found: 0,

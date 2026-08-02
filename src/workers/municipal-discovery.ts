@@ -3,6 +3,7 @@ import { ProgramType } from '@prisma/client';
 import * as cheerio from 'cheerio';
 import { prisma } from '../lib/prisma';
 import { normalizeText, WorkerLogger } from '../lib/worker-utils';
+import { withIngestionRun } from '../lib/ingestion';
 import {
   CANONICAL_SOURCES,
   MUNICIPAL_DISCOVERY_PATHS,
@@ -558,6 +559,15 @@ async function scanMunicipalityPrograms(params: {
 }
 
 export async function ingestMunicipalDiscovery(): Promise<
+  WorkerRunResult & {
+    municipalitiesCovered: number;
+    municipalitiesDiscovered: number;
+  }
+> {
+  return withIngestionRun('municipios-portugal', ingestMunicipalDiscoveryInner);
+}
+
+async function ingestMunicipalDiscoveryInner(): Promise<
   WorkerRunResult & {
     municipalitiesCovered: number;
     municipalitiesDiscovered: number;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runIngestion } from '@/workers/registry';
+import { isValidIngestSource, runIngestion } from '@/workers/registry';
 
 /**
  * GET /api/cron/ingest
@@ -19,8 +19,15 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const source = searchParams.get('source') || 'all';
 
+  if (!isValidIngestSource(source)) {
+    return NextResponse.json(
+      { error: `Fonte de ingestão inválida: "${source}"` },
+      { status: 400 }
+    );
+  }
+
   try {
-    const results = await runIngestion(source as any);
+    const results = await runIngestion(source);
     
     // Calculate stats
     const stats = results.reduce((acc, r) => {
