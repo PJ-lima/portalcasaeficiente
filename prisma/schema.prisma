@@ -11,18 +11,20 @@ datasource db {
 }
 
 model User {
-  id            String             @id @default(cuid()) @map("id")
-  name          String?            @map("name")
-  email         String?            @unique @map("email")
-  emailVerified DateTime?          @map("email_verified")
-  image         String?            @map("image")
-  nif           String?            @map("nif")
-  passwordHash  String?            @map("password_hash")
-  role          String             @default("user") @map("role")
-  accounts      Account[]          @relation("user_accounts")
-  sessions      Session[]          @relation("user_sessions")
-  dossier       UserDossier?       @relation("user_dossier")
-  savedPrograms UserSavedProgram[] @relation("user_saved_programs")
+  id                   String                    @id @default(cuid()) @map("id")
+  name                 String?                   @map("name")
+  email                String?                   @unique @map("email")
+  emailVerified        DateTime?                 @map("email_verified")
+  image                String?                   @map("image")
+  nif                  String?                   @map("nif")
+  passwordHash         String?                   @map("password_hash")
+  role                 String                    @default("user") @map("role")
+  accounts             Account[]                 @relation("user_accounts")
+  sessions             Session[]                 @relation("user_sessions")
+  dossier              UserDossier?              @relation("user_dossier")
+  savedPrograms        UserSavedProgram[]        @relation("user_saved_programs")
+  notificationSettings UserNotificationSettings? @relation("user_notification_settings")
+  notifications        NotificationQueue[]       @relation("user_notifications")
 
   @@index([nif])
   @@map("users")
@@ -67,25 +69,57 @@ model VerificationToken {
 }
 
 model Program {
-  id           String             @id @default(cuid()) @map("id")
-  slug         String             @unique @map("slug")
-  title        String             @map("title")
-  entity       String?            @map("entity")
-  programType  ProgramType        @map("program_type")
-  status       ProgramStatus      @map("status")
-  summary      String?            @map("summary")
-  officialUrl  String?            @map("official_url")
-  createdAt    DateTime           @default(now()) @map("created_at")
-  updatedAt    DateTime           @updatedAt @map("updated_at")
-  geographies  ProgramGeography[] @relation("program_geographies")
-  versions     ProgramVersion[]   @relation("program_versions")
-  sources      Source[]           @relation("program_sources")
-  savedByUsers UserSavedProgram[] @relation("saved_programs")
+  id          String        @id @default(cuid()) @map("id")
+  slug        String        @unique @map("slug")
+  title       String        @map("title")
+  entity      String?       @map("entity")
+  programType ProgramType   @map("program_type")
+  domain      ProgramDomain @default(ENERGY_EFFICIENCY) @map("domain")
+  supportType SupportType?  @map("support_type")
+  status      ProgramStatus @map("status")
+  summary     String?       @map("summary")
+  officialUrl String?       @map("official_url")
+
+  // Estado real do apoio — o que nenhuma fonte oficial agrega.
+  // statusNote explica o estado em português simples ("dotação esgotada em fev-2026,
+  // 28 mil candidaturas elegíveis sem vale"); budget* permite mostrar execução real.
+  statusNote      String?   @map("status_note")
+  statusSourceUrl String?   @map("status_source_url")
+  budgetTotal     Decimal?  @map("budget_total") @db.Decimal(14, 2)
+  budgetCommitted Decimal?  @map("budget_committed") @db.Decimal(14, 2)
+  lastVerifiedAt  DateTime? @map("last_verified_at")
+
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+  geographies  ProgramGeography[]   @relation("program_geographies")
+  versions     ProgramVersion[]     @relation("program_versions")
+  sources      Source[]             @relation("program_sources")
+  savedByUsers UserSavedProgram[]   @relation("saved_programs")
+  statusEvents ProgramStatusEvent[] @relation("program_status_events")
 
   @@index([slug])
   @@index([status])
   @@index([programType])
+  @@index([domain])
   @@map("programs")
+}
+
+/// Histórico de estado de um programa. Nunca update-in-place: cada mudança
+/// verificada gera um evento, o que permite mostrar "cancelado a 19-fev-2026"
+/// e serve de gatilho para as notificações.
+model ProgramStatusEvent {
+  id         String        @id @default(cuid()) @map("id")
+  programId  String        @map("program_id")
+  status     ProgramStatus @map("status")
+  note       String?       @map("note")
+  sourceUrl  String?       @map("source_url")
+  detectedAt DateTime      @default(now()) @map("detected_at")
+  detectedBy String        @default("worker") @map("detected_by")
+  program    Program       @relation("program_status_events", fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([programId])
+  @@index([detectedAt])
+  @@map("program_status_events")
 }
 
 model ProgramVersion {
@@ -218,11 +252,40 @@ enum ProgramStatus {
   CLOSED
   PLANNED
   UNKNOWN
+  /// Candidaturas aceites mas sem verba: o caso Vale Eficiência (fev-2026),
+  /// em que 28 mil candidaturas elegíveis ficaram sem apoio.
+  EXHAUSTED
+  SUSPENDED
+  CANCELLED
+  /// Aberto ou fechado, mas com pagamentos em atraso reportados.
+  PAYMENTS_DELAYED
 }
 
 enum ProgramType {
   NATIONAL
   MUNICIPAL
+}
+
+/// Domínio do apoio. Permite ingerir E-Lar, IFRRU, Porta 65 ou benefícios
+/// fiscais sem esticar a semântica de "eficiência energética" — e mantém
+/// aberta a generalização para agregador universal de apoios.
+enum ProgramDomain {
+  ENERGY_EFFICIENCY
+  RENOVATION
+  HOUSING_ACCESS
+  TAX_BENEFIT
+  SOCIAL
+  OTHER
+}
+
+/// Forma do apoio. Os labels já existiam em src/lib/utils.ts sem campo na DB.
+enum SupportType {
+  VOUCHER
+  REIMBURSEMENT
+  SUBSIDY
+  LOAN
+  TAX_BENEFIT
+  MIXED
 }
 
 enum SourceType {
@@ -256,4 +319,79 @@ model IngestionRun {
   @@index([status])
   @@index([startedAt])
   @@map("ingestion_runs")
+}
+
+/// Preferências de alerta. Sem isto, notificar é spam: o utilizador tem de
+/// escolher domínio e concelho, senão recebe apoios que não lhe servem.
+model UserNotificationSettings {
+  id                  String          @id @default(cuid()) @map("id")
+  userId              String          @unique @map("user_id")
+  emailEnabled        Boolean         @default(true) @map("email_enabled")
+  /// Domínios que interessam ao utilizador. Vazio = todos.
+  domains             ProgramDomain[] @map("domains")
+  /// Concelhos a vigiar. Vazio = usa o concelho do dossiê, se existir.
+  concelhoIds         String[]        @map("concelho_ids")
+  /// Avisar sobre mudanças de estado dos apoios guardados nos favoritos.
+  savedProgramUpdates Boolean         @default(true) @map("saved_program_updates")
+  /// Avisar quando um prazo de candidatura está a terminar.
+  deadlineReminders   Boolean         @default(true) @map("deadline_reminders")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  user                User            @relation("user_notification_settings", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_notification_settings")
+}
+
+enum NotificationType {
+  NEW_PROGRAM
+  STATUS_CHANGE
+  DEADLINE
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+}
+
+/// Fila de notificações. Produzir e enviar são passos separados: o worker de
+/// ingestão enfileira, um cron distinto envia. Assim uma falha do provider de
+/// email não faz perder a deteção.
+model NotificationQueue {
+  id        String             @id @default(cuid()) @map("id")
+  userId    String             @map("user_id")
+  programId String?            @map("program_id")
+  type      NotificationType   @map("type")
+  payload   Json               @map("payload")
+  status    NotificationStatus @default(pending) @map("status")
+  attempts  Int                @default(0) @map("attempts")
+  lastError String?            @map("last_error")
+  createdAt DateTime           @default(now()) @map("created_at")
+  sentAt    DateTime?          @map("sent_at")
+  user      User               @relation("user_notifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Evita duplicar o mesmo aviso para o mesmo utilizador e programa.
+  @@unique([userId, programId, type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("notification_queue")
+}
+
+/// Snapshot das tabelas públicas de "situação das candidaturas" (Fundo Ambiental
+/// e afins). Dedup por tableHash: só grava quando a tabela muda. É a matéria-prima
+/// para dizer ao utilizador em que ponto está realmente o programa.
+model ApplicationStatusSnapshot {
+  id         String   @id @default(cuid()) @map("id")
+  source     String   @map("source")
+  url        String   @map("url")
+  programId  String?  @map("program_id")
+  tableHash  String   @map("table_hash")
+  data       Json     @map("data")
+  capturedAt DateTime @default(now()) @map("captured_at")
+
+  @@unique([url, tableHash])
+  @@index([source])
+  @@index([programId])
+  @@index([capturedAt])
+  @@map("application_status_snapshots")
 }
