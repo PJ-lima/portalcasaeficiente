@@ -2,20 +2,20 @@
 
 ## Visão Geral
 
-Sistema que integra o dossiê do utilizador com um motor de elegibilidade simplificado para fornecer recomendações personalizadas de programas de apoio.
+Sistema que integra o dossiê do utilizador com o motor de elegibilidade (`src/lib/eligibility-engine.ts`) para fornecer recomendações personalizadas de programas de apoio.
 
 ## Componentes Implementados
 
 ### 1. Endpoint de Recomendações
 **Ficheiro:** `/src/app/api/eligibility/recommendations/route.ts`
 
-- **Rota:** `GET /api/eligibility/recommendations?userId=xxx`
+- **Rota:** `GET /api/eligibility/recommendations` (utilizador vem da sessão NextAuth)
 - **Descrição:** Calcula a elegibilidade de programas disponíveis com base no perfil do utilizador
 - **Funcionalidades:**
   - Busca o dossiê do utilizador (UserDossier)
   - Identifica o concelho do utilizador
   - Filtra programas NACIONAIS + MUNICIPAIS do concelho
-  - Calcula score de elegibilidade (mock simplificado)
+  - Calcula score com o motor de elegibilidade real (`src/lib/eligibility-engine.ts`)
   - Ordena por relevância (ELIGIBLE > MAYBE > NOT_ELIGIBLE)
   - Retorna estatísticas agregadas
 
@@ -70,7 +70,7 @@ Client Component que:
 
 - **Rota:** `/conta/recomendacoes`
 - Server Component que renderiza o RecommendationsList
-- TODO: Integrar com NextAuth para obter userId da sessão
+- Protegida por `src/middleware.ts`; a API resolve o utilizador pela sessão
 
 ## Fluxo de Utilização
 
@@ -91,15 +91,18 @@ Client Component que:
 
 ## Próximos Passos
 
-### Motor de Elegibilidade Real
-- Implementar sistema de regras (`ProgramVersion.rulesJson`)
-- Integrar com `/src/lib/eligibility-engine.ts` (já existe)
-- Mapear campos do dossiê para regras de elegibilidade
-- Suportar operadores: ==, !=, <, <=, >, >=, in, not_in, between
+### Motor de Elegibilidade
+- Feito: a rota usa `normalizeProgramRules` + `evaluateEligibility` de
+  `src/lib/eligibility-engine.ts`, com os campos do dossiê do utilizador.
+- Feito: autenticação por sessão NextAuth (já não há `userId` em query string).
+- Feito: notificações de programa novo e de mudança de estado (`/conta/notificacoes`).
+- Falta: povoar `ProgramVersion.rulesJson` com regras reais por programa. Sem
+  regras publicadas a rota devolve deliberadamente `MAYBE` — dizer "és elegível"
+  sem base seria criar uma expectativa que a entidade não confirmou.
+- Falta: regime de propriedade no dossiê (o motor suporta `ownershipType`, o
+  dossiê ainda não o guarda).
 
 ### Melhorias de UX
-- Autenticação: obter userId da sessão NextAuth
-- Notificações: alertar quando novo programa elegível
 - Histórico: guardar avaliações anteriores
 - Comparação: comparar múltiplos programas lado a lado
 
@@ -117,16 +120,15 @@ Client Component que:
 ## Teste
 
 ```bash
-# 1. Testar API diretamente
-curl "http://localhost:3000/api/eligibility/recommendations?userId=cmlb5xrt30008xib54akgfo9s"
-
-# 2. Abrir página no browser
+# A API exige sessão iniciada — testar pelo browser, autenticado
 open http://localhost:3000/conta/recomendacoes
 ```
 
 ## Notas Técnicas
 
-- Motor de elegibilidade atual é **mock simplificado**
-- Score baseado apenas em tipo de programa (NATIONAL=75%, MUNICIPAL=60%)
-- Não implementa regras de elegibilidade reais ainda
-- Próxima iteração deve usar `ProgramVersion.rulesJson` e `eligibility-engine.ts`
+- O motor real (`src/lib/eligibility-engine.ts`) é partilhado com
+  `/api/eligibility/check`. Operadores suportados: ==, !=, <, <=, >, >=, in,
+  not_in, between.
+- Programas sem `rulesJson` preenchido devolvem `MAYBE` com nota a remeter para
+  a fonte oficial, em vez de um score inventado.
+- Regras de quando notificar: `docs/versionamento.md`.

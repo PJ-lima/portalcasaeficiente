@@ -48,14 +48,8 @@ prisma/*.db-journal
 .vscode/
 
 # Local planning/docs (do not version)
-walkthrough.md
+# Nota: o histórico de planeamento passou para docs/ e é versionado.
+# proximospassos.md (raiz) e docs/ são agora a fonte de verdade partilhada.
 proximospassos.txt
-PROBLEMAS_DOSSIER_RESOLVIDOS.md
 nextsteps.txt
-implementation_plan.md
-FASE1_TESTES.md
-FASE2_TESTES.md
-FASE3_TESTES.md
-FASE3_RESULTADOS.md
-proximospassos.md
 SECURITY_CHECKLIST.md
