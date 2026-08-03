@@ -1,10 +1,13 @@
-import { Metadata } from 'next';
 import { DossierForm } from '@/components/dossier/DossierForm';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'O Meu Dossiê | Portal Casa Eficiente',
+// noindex vem do layout de /conta; aqui só o título e o canonical.
+export const metadata = buildMetadata({
+  title: 'O Meu Dossiê',
   description: 'Guarda as tuas informações para receber recomendações personalizadas',
-};
+  path: '/conta/dossier',
+  noindex: true,
+});
 
 export default function DossierPage() {
   return (

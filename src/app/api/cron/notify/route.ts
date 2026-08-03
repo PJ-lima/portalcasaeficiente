@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendNotificationEmail } from '@/lib/email';
 import { programStatusExplanations, programStatusLabels } from '@/lib/utils';
+import { getSiteUrl } from '@/lib/site-url';
 import { NotificationStatus, NotificationType } from '@prisma/client';
 
 /**
@@ -18,10 +19,10 @@ const BATCH_SIZE = 50;
 const MAX_ATTEMPTS = 3;
 
 function siteUrl(): string {
-  return (
-    process.env.NEXTAUTH_URL?.replace(/\/$/, '') ??
-    'https://portalcasaeficiente.pt'
-  );
+  // NEXTAUTH_URL primeiro porque os links do email têm de bater certo com o
+  // domínio onde a sessão é válida; o fallback é a mesma cadeia do SEO, em vez
+  // de um domínio hardcoded que ainda nem está registado.
+  return process.env.NEXTAUTH_URL?.replace(/\/$/, '') ?? getSiteUrl();
 }
 
 type NotificationPayload = {

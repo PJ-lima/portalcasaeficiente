@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 import { prisma } from '../lib/prisma';
 import { normalizeText, WorkerLogger } from '../lib/worker-utils';
 import { withIngestionRun } from '../lib/ingestion';
+import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 import {
   CANONICAL_SOURCES,
   MUNICIPAL_DISCOVERY_PATHS,
@@ -269,7 +270,7 @@ async function fetchCsvLikeResource(url: string): Promise<string | null> {
       timeout: 45000,
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)',
+          CRAWLER_USER_AGENT,
         Accept: 'text/csv,text/plain,text/tab-separated-values;q=0.9,*/*;q=0.8',
       },
       responseType: 'text',
@@ -335,7 +336,7 @@ async function fetchMunicipalitySitesFromUdataCatalogue(
       timeout: 45000,
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)',
+          CRAWLER_USER_AGENT,
         Accept: 'application/json',
       },
     });
@@ -435,7 +436,7 @@ async function fetchMunicipalitySitesFromOfficialIndex(
         timeout: 30000,
         headers: {
           'User-Agent':
-            'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)',
+            CRAWLER_USER_AGENT,
           Accept: 'text/html,application/xhtml+xml,application/xml',
         },
       });

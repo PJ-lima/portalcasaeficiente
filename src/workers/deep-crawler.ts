@@ -16,6 +16,7 @@ import * as cheerio from 'cheerio';
 import type { CheerioAPI } from 'cheerio';
 import type { AnyNode, Element as DomElement } from 'domhandler';
 import { normalizeText, WorkerLogger } from '../lib/worker-utils';
+import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 
 // ============================================================================
 // TYPES
@@ -246,7 +247,6 @@ const BLOCKED_TITLE_PATTERNS = [
 // UTILITY FUNCTIONS
 // ============================================================================
 
-const USER_AGENT = 'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)';
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -497,7 +497,7 @@ export async function crawlPageForDetails(
     const response = await axios.get<string>(url, {
       timeout,
       headers: {
-        'User-Agent': USER_AGENT,
+        'User-Agent': CRAWLER_USER_AGENT,
         'Accept': 'text/html,application/xhtml+xml,application/xml',
         'Accept-Language': 'pt-PT,pt;q=0.9,en;q=0.8',
       },

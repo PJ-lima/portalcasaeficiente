@@ -2,6 +2,14 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ConcelhoSearch } from '@/components/search/ConcelhoSearch';
+import { buildMetadata, SITE_NAME, SITE_TAGLINE } from '@/lib/seo';
+
+export const metadata = buildMetadata({
+  title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+  description:
+    'Há dinheiro do Estado para a tua casa. Mostramos-te que apoios existem, se ainda há verba e qual o estado real de cada programa.',
+  path: '/',
+});
 import {
   Search,
   FileCheck,

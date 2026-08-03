@@ -1,10 +1,15 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ProgramList } from '@/components/programs/ProgramList';
 import { ProgramFilters } from '@/components/programs/ProgramFilters';
 import { ConcelhoSearchBar } from '@/components/search/ConcelhoSearchBar';
 import { prisma } from '@/lib/prisma';
+import { buildMetadata } from '@/lib/seo';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildBreadcrumbJsonLd } from '@/lib/json-ld';
+import { getConcelhosWithMunicipalPrograms } from '@/lib/concelhos';
 
 interface PageProps {
   searchParams: Promise<{
@@ -28,10 +33,23 @@ export default async function ApoiosPage({ searchParams }: PageProps) {
   });
   const availableDomains = domainGroups.map((group) => group.domain);
 
+  const concelhosComPagina = await getConcelhosWithMunicipalPrograms();
+
   return (
     <>
       <Header />
-      
+
+      {/* Sem ItemList: a lista visível depende dos filtros aplicados dentro do
+          ProgramList, e um ItemList que não corresponda ao que está no ecrã é
+          pior do que nenhum. O ItemList vive nas páginas de concelho, onde a
+          query é determinística. */}
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: 'Início', path: '/' },
+          { name: 'Apoios', path: '/apoios' },
+        ])}
+      />
+
       <main className="flex-1">
         {/* Header da página */}
         <div className="border-b border-border bg-card">
@@ -73,6 +91,27 @@ export default async function ApoiosPage({ searchParams }: PageProps) {
               </Suspense>
             </div>
           </div>
+
+          {concelhosComPagina.length > 0 && (
+            <section className="mt-12 border-t border-border pt-8">
+              <h2 className="text-lg font-semibold text-ink">Apoios por concelho</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Concelhos com apoios municipais próprios, além dos nacionais.
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {concelhosComPagina.map((concelho) => (
+                  <li key={concelho.id}>
+                    <Link
+                      href={`/apoios/concelho/${concelho.slug}`}
+                      className="inline-block rounded-full border border-border bg-card px-3 py-1.5 text-sm text-muted-foreground transition hover:border-primary hover:text-primary"
+                    >
+                      {concelho.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
       </main>
 
@@ -107,7 +146,8 @@ function ProgramListSkeleton() {
   );
 }
 
-export const metadata = {
-  title: 'Apoios à Eficiência Energética | Portal Casa Eficiente',
+export const metadata = buildMetadata({
+  title: 'Apoios à Eficiência Energética',
   description: 'Descobre todos os apoios disponíveis para melhorar a eficiência energética da tua casa. Programas nacionais e municipais em Portugal.',
-};
+  path: '/apoios',
+});

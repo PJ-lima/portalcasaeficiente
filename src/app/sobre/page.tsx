@@ -1,3 +1,4 @@
+import { buildMetadata } from '@/lib/seo';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Target, Users, Eye, Award } from 'lucide-react';
@@ -13,7 +14,7 @@ export default function SobrePage() {
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="text-3xl font-bold text-ink sm:text-4xl">
-                Sobre o Portal Casa Eficiente
+                Sobre o Radar de Apoios
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
                 O ponto de acesso aos apoios para tornar a tua casa mais confortável, 
@@ -48,7 +49,7 @@ export default function SobrePage() {
                     Hoje, a informação sobre apoios está espalhada por vários sites, em linguagem técnica,
                     com documentos longos e requisitos difíceis de interpretar. Isso cria uma desigualdade
                     simples: quem tem tempo e literacia burocrática consegue; quem não tem, fica de fora.
-                    O Portal Casa Eficiente existe para ser um tradutor prático: menos ruído, mais clareza.
+                    O Radar de Apoios existe para ser um tradutor prático: menos ruído, mais clareza.
                   </p>
                 </div>
               </div>
@@ -60,10 +61,10 @@ export default function SobrePage() {
         <section className="bg-background py-16">
           <div className="container">
             <div className="mx-auto max-w-3xl">
-              <h2 className="text-2xl font-bold text-ink">O que é o Portal Casa Eficiente</h2>
+              <h2 className="text-2xl font-bold text-ink">O que é o Radar de Apoios</h2>
               
               <p className="mt-6 text-muted-foreground leading-relaxed">
-                O Portal Casa Eficiente é uma <strong>plataforma independente</strong> que ajuda 
+                O Radar de Apoios é uma <strong>plataforma independente</strong> que ajuda 
                 qualquer cidadão a:
               </p>
               
@@ -198,7 +199,7 @@ export default function SobrePage() {
                   <div>
                     <h2 className="text-xl font-bold text-ink">Nota de Transparência</h2>
                     <p className="mt-4 text-muted-foreground leading-relaxed">
-                      O Portal Casa Eficiente é uma <strong>plataforma independente</strong> de 
+                      O Radar de Apoios é uma <strong>plataforma independente</strong> de 
                       informação e apoio ao cidadão. Não somos afiliados oficialmente ao Estado 
                       Português, Fundo Ambiental, ou qualquer outra entidade governamental.
                     </p>
@@ -209,7 +210,7 @@ export default function SobrePage() {
                     </p>
                     <h3 className="mt-6 text-lg font-semibold text-ink">Como decidimos o que aparece</h3>
                     <p className="mt-3 text-muted-foreground leading-relaxed">
-                      O Portal Casa Eficiente não &ldquo;inventa&rdquo; apoios. Só publicamos programas
+                      O Radar de Apoios não &ldquo;inventa&rdquo; apoios. Só publicamos programas
                       que tenham fonte oficial identificável (site da entidade, aviso, regulamento,
                       ou publicação pública) e guardamos a referência para auditoria.
                     </p>
@@ -253,7 +254,8 @@ export default function SobrePage() {
   );
 }
 
-export const metadata = {
-  title: 'Sobre Nós | Portal Casa Eficiente',
-  description: 'Conheça a missão e valores do Portal Casa Eficiente. Uma plataforma independente de apoio ao cidadão.',
-};
+export const metadata = buildMetadata({
+  title: 'Sobre Nós',
+  description: 'Conheça a missão e valores do Radar de Apoios. Uma plataforma independente de apoio ao cidadão.',
+  path: '/sobre',
+});

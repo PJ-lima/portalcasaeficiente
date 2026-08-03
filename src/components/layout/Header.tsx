@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import siteLogo from '../../../assets/media/LogoTransparent.png';
+import { SITE_NAME } from '@/lib/seo';
 
 const navLinks = [
   { href: '/apoios', label: 'Apoios' },
@@ -39,7 +40,7 @@ export function Header() {
               className="site-logo"
             />
             <span className="hidden font-display text-lg font-bold leading-tight text-ink lg:block">
-              Casa Eficiente
+              {SITE_NAME}
             </span>
           </Link>
 

@@ -2,7 +2,7 @@ import { getAvailableSources, runIngestion, type IngestSourceId } from './regist
 
 export async function ingestAll(source: IngestSourceId = 'all') {
   console.log('═══════════════════════════════════════════════════════════');
-  console.log('🚀 PORTAL CASA EFICIENTE - Ingestão Automática');
+  console.log('🚀 RADAR DE APOIOS - Ingestão Automática');
   console.log(`📅 ${new Date().toISOString()}`);
   console.log('═══════════════════════════════════════════════════════════\n');
 

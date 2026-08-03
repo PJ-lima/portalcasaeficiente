@@ -1,3 +1,4 @@
+import { buildMetadata } from '@/lib/seo';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { EligibilityWizard } from '@/components/eligibility/EligibilityWizard';
@@ -38,7 +39,8 @@ export default async function VerificarPage({ searchParams }: PageProps) {
   );
 }
 
-export const metadata = {
-  title: 'Verificar Elegibilidade | Portal Casa Eficiente',
+export const metadata = buildMetadata({
+  title: 'Verificar Elegibilidade',
   description: 'Descobre se és elegível para apoios à eficiência energética. Questionário simples e rápido.',
-};
+  path: '/verificar',
+});

@@ -17,11 +17,9 @@ import { prisma } from '../lib/prisma';
 import { calculateContentHash, normalizeText, WorkerLogger } from '../lib/worker-utils';
 import { withIngestionRun } from '../lib/ingestion';
 import type { WorkerRunResult } from './discovery-engine';
+import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 
 const SOURCE_ID = 'fundo-ambiental-status';
-
-const USER_AGENT =
-  'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)';
 
 const REQUEST_TIMEOUT_MS = 20_000;
 
@@ -112,7 +110,7 @@ export function hashTables(tables: StatusTable[]): string {
 async function captureUrl(url: string): Promise<'new' | 'skipped'> {
   const response = await axios.get<string>(url, {
     timeout: REQUEST_TIMEOUT_MS,
-    headers: { 'User-Agent': USER_AGENT },
+    headers: { 'User-Agent': CRAWLER_USER_AGENT },
     responseType: 'text',
   });
 

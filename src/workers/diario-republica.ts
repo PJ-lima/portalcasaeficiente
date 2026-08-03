@@ -14,6 +14,7 @@ import { prisma } from '../lib/prisma';
 import { normalizeText, WorkerLogger } from '../lib/worker-utils';
 import { withIngestionRun } from '../lib/ingestion';
 import { CANONICAL_SOURCES } from './canonical-sources';
+import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 import {
   discoverProgramsFromUrl,
   persistDiscoveredProgram,
@@ -223,7 +224,7 @@ async function fetchHtml(url: string): Promise<string | null> {
       maxRedirects: 5,
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)',
+          CRAWLER_USER_AGENT,
         Accept: 'text/html,application/xhtml+xml,application/xml,text/plain;q=0.9,*/*;q=0.8',
       },
     });
@@ -468,7 +469,7 @@ async function searchDreViaOfficialApi(term: string): Promise<DreApiSearchOutcom
         },
         headers: {
           'User-Agent':
-            'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)',
+            CRAWLER_USER_AGENT,
           Accept: 'application/json',
         },
       });

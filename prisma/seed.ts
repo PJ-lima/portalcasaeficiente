@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seed (mínimo) - Portal Casa Eficiente");
+  console.log("🌱 Seed (mínimo) - Radar de Apoios");
 
   // 1) Criar utilizador de teste
   const testUser = await prisma.user.upsert({

@@ -1,3 +1,4 @@
+import { buildMetadata } from '@/lib/seo';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CheckCircle2, XCircle, HelpCircle, Lightbulb, Shield, Heart } from 'lucide-react';
@@ -13,7 +14,7 @@ export default function ComoFuncionaPage() {
           <div className="container">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="text-3xl font-bold text-ink sm:text-4xl">
-                Como funciona o Portal Casa Eficiente
+                Como funciona o Radar de Apoios
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
                 Ajudamos-te a navegar o mundo dos apoios públicos à eficiência energética 
@@ -90,7 +91,7 @@ export default function ComoFuncionaPage() {
                   <div>
                     <h3 className="font-semibold text-ink">Não somos um site do governo</h3>
                     <p className="mt-1 text-muted-foreground">
-                      O Portal Casa Eficiente é uma iniciativa independente. 
+                      O Radar de Apoios é uma iniciativa independente. 
                       Não temos afiliação oficial com o Estado Português.
                     </p>
                   </div>
@@ -260,7 +261,8 @@ export default function ComoFuncionaPage() {
   );
 }
 
-export const metadata = {
-  title: 'Como Funciona | Portal Casa Eficiente',
-  description: 'Descobre como o Portal Casa Eficiente te ajuda a encontrar e candidatar-te a apoios de eficiência energética.',
-};
+export const metadata = buildMetadata({
+  title: 'Como Funciona',
+  description: 'Descobre como o Radar de Apoios te ajuda a encontrar e candidatar-te a apoios do Estado para a tua casa.',
+  path: '/como-funciona',
+});

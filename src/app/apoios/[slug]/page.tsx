@@ -8,6 +8,10 @@ import { Footer } from '@/components/layout/Footer';
 import { SaveProgramButton } from '@/components/programs/SaveProgramButton';
 import { ProgramStatusBadge } from '@/components/programs/ProgramStatusBadge';
 import { ProgramStatusTimeline } from '@/components/programs/ProgramStatusTimeline';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildBreadcrumbJsonLd, buildGovernmentServiceJsonLd } from '@/lib/json-ld';
+import { buildMetadata } from '@/lib/seo';
+import { concelhoSlug, getConcelhosWithMunicipalPrograms } from '@/lib/concelhos';
 import {
   formatCurrency,
   formatRelativeDaysFromNow,
@@ -89,10 +93,27 @@ export default async function ProgramDetailPage({ params }: PageProps) {
       ? Math.min(100, Math.round((budgetCommitted / budgetTotal) * 100))
       : null;
 
+  // Só os concelhos com apoio municipal têm página própria — os restantes
+  // ficariam com uma lista igual à de toda a gente.
+  const concelhosComPagina = new Set(
+    (await getConcelhosWithMunicipalPrograms()).map((concelho) => concelho.name)
+  );
+
   return (
     <>
       <Header />
-      
+
+      <JsonLd
+        data={[
+          buildGovernmentServiceJsonLd(program),
+          buildBreadcrumbJsonLd([
+            { name: 'Início', path: '/' },
+            { name: 'Apoios', path: '/apoios' },
+            { name: program.title, path: `/apoios/${program.slug}` },
+          ]),
+        ]}
+      />
+
       <main className="flex-1">
         {/* Navegação */}
         <div className="border-b border-border bg-card">
@@ -361,10 +382,20 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                         <span className="flex items-center gap-1.5 font-medium text-ink"><MapPin className="h-3.5 w-3.5 text-primary" /> Todo o país</span>
                       ) : (
                         <div>
-                          <span className="flex items-center gap-1.5 font-medium text-ink">
-                            <MapPin className="h-3.5 w-3.5 text-primary" />
-                            {geo.municipality || geo.district || geo.parish}
-                          </span>
+                          {geo.municipality && concelhosComPagina.has(geo.municipality) ? (
+                            <Link
+                              href={`/apoios/concelho/${concelhoSlug(geo.municipality)}`}
+                              className="flex items-center gap-1.5 font-medium text-ink transition hover:text-primary"
+                            >
+                              <MapPin className="h-3.5 w-3.5 text-primary" />
+                              {geo.municipality}
+                            </Link>
+                          ) : (
+                            <span className="flex items-center gap-1.5 font-medium text-ink">
+                              <MapPin className="h-3.5 w-3.5 text-primary" />
+                              {geo.municipality || geo.district || geo.parish}
+                            </span>
+                          )}
                           {geo.district && geo.municipality && (
                             <span className="text-muted-foreground"> • {geo.district}</span>
                           )}
@@ -445,11 +476,14 @@ export async function generateMetadata({ params }: PageProps) {
   });
 
   if (!program) {
-    return { title: 'Programa não encontrado' };
+    return { title: 'Programa não encontrado', robots: { index: false, follow: false } };
   }
 
-  return {
-    title: `${program.title} | Portal Casa Eficiente`,
-    description: program.summary || `Informação sobre o programa ${program.title}${program.entity ? ` de ${program.entity}` : ''}`,
-  };
+  return buildMetadata({
+    title: program.title,
+    description:
+      program.summary ||
+      `Informação sobre o programa ${program.title}${program.entity ? ` de ${program.entity}` : ''}`,
+    path: `/apoios/${slug}`,
+  });
 }

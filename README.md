@@ -1,4 +1,8 @@
-# portalcasaeficiente
+# Radar de Apoios
+
+_Apoios do Estado para a tua casa._
+
+Antes chamava-se Portal Casa Eficiente; a pasta e o repositório ainda usam o nome antigo (`portalcasaeficiente`), tal como o projeto Vercel. Renomear isso é decisão à parte — o código, a UI e a metadata já usam o nome novo.
 
 Estrutura inicial do projecto preparada para desenvolvimento.
 

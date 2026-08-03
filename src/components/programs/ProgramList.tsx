@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { withRlsContext } from '@/lib/prisma-rls';
+import { programGeographyFilter } from '@/lib/concelhos';
 import { 
   formatRelativeDaysFromNow,
 } from '@/lib/utils';
@@ -72,13 +73,9 @@ export async function ProgramList({ searchParams }: ProgramListProps) {
     });
     
     if (concelho) {
-      const geoFilter: Prisma.ProgramWhereInput[] = [
-        // Programas nacionais
-        { geographies: { some: { level: 'NATIONAL' } } },
-        // Programas deste município
-        { geographies: { some: { level: 'MUNICIPALITY', municipality: concelho.name } } },
-      ];
-      
+      // Predicado partilhado com as páginas de concelho — ver src/lib/concelhos.ts.
+      const geoFilter = programGeographyFilter(concelho.name);
+
       // Combinar com OR existente se houver
       if (where.OR) {
         where.AND = [

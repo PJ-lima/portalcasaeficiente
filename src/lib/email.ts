@@ -1,3 +1,5 @@
+import { SITE_NAME } from './seo';
+
 const RESEND_API_URL = 'https://api.resend.com/emails';
 
 export type PasswordResetEmailParams = {
@@ -25,7 +27,7 @@ function buildPasswordResetHtml({
 
   return `
     <p>${greeting}</p>
-    <p>Recebemos um pedido para redefinir a password da sua conta no Portal Casa Eficiente.</p>
+    <p>Recebemos um pedido para redefinir a password da sua conta no ${SITE_NAME}.</p>
     <p>
       <a href="${escapeHtml(resetUrl)}" style="background:#2563eb;color:#ffffff;padding:10px 16px;border-radius:8px;text-decoration:none;display:inline-block;">
         Redefinir password
@@ -46,7 +48,7 @@ function buildPasswordResetText({
   return [
     greeting,
     '',
-    'Recebemos um pedido para redefinir a password da sua conta no Portal Casa Eficiente.',
+    `Recebemos um pedido para redefinir a password da sua conta no ${SITE_NAME}.`,
     `Redefina aqui: ${resetUrl}`,
     '',
     `Este link expira em ${expiresInMinutes} minutos.`,
@@ -77,7 +79,7 @@ export async function sendPasswordResetEmail(params: PasswordResetEmailParams): 
     body: JSON.stringify({
       from: emailFrom,
       to: [params.to],
-      subject: 'Recuperacao de password - Portal Casa Eficiente',
+      subject: `Recuperacao de password - ${SITE_NAME}`,
       html: buildPasswordResetHtml(params),
       text: buildPasswordResetText(params),
     }),

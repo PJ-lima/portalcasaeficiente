@@ -1,0 +1,10 @@
+import type { Metadata } from 'next';
+
+// Área autenticada: nunca indexada (ver nota em src/app/conta/layout.tsx).
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

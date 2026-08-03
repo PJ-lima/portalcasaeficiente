@@ -160,6 +160,20 @@ invalid.push(...validateDatabaseUrl(process.env.DATABASE_URL!, 'DATABASE_URL'));
 invalid.push(...validateDatabaseUrl(process.env.DIRECT_URL!, 'DIRECT_URL'));
 if (!isHttpUrl(process.env.NEXTAUTH_URL!)) invalid.push('NEXTAUTH_URL must be a valid http(s) URL');
 
+// SEO: SITE_URL alimenta metadataBase/canonicals/sitemap; SITE_INDEXABLE decide se o
+// deployment pode ser indexado. Como o branch staging gera Production Deployments,
+// NODE_ENV/VERCEL_ENV valem "production" nos dois sitios e nao servem de discriminador.
+const siteUrl = process.env.SITE_URL?.trim();
+if (siteUrl && !isHttpUrl(siteUrl)) invalid.push('SITE_URL must be a valid http(s) URL');
+
+const siteIndexable = process.env.SITE_INDEXABLE?.trim();
+if (siteIndexable && siteIndexable !== 'true' && siteIndexable !== 'false') {
+  invalid.push('SITE_INDEXABLE must be exactly "true" or "false"');
+}
+if (siteIndexable === 'true' && !siteUrl) {
+  invalid.push('SITE_INDEXABLE=true requires SITE_URL to be set (canonicals/sitemap need an absolute URL)');
+}
+
 if (invalid.length > 0) {
   console.error(`[env:check] Invalid values (${mode}):`);
   for (const issue of invalid) {
@@ -181,6 +195,8 @@ if (weakSecrets.length > 0) {
 }
 
 const optional = [
+  'SITE_URL',
+  'SITE_INDEXABLE',
   'RESEND_API_KEY',
   'EMAIL_FROM',
   'PASSWORD_RESET_TOKEN_TTL_MINUTES',

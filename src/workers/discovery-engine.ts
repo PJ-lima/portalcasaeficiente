@@ -7,6 +7,7 @@ import type { CanonicalSourceDefinition } from './canonical-sources';
 import { calculateContentHash, normalizeText, WorkerLogger } from '../lib/worker-utils';
 import { withIngestionRun } from '../lib/ingestion';
 import { queueNewProgramNotifications } from '../lib/notifications';
+import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 import { 
   crawlPageForDetails, 
   shouldBlockTitle, 
@@ -14,9 +15,6 @@ import {
   type SupportProgramDetails,
   type SupportCategory 
 } from './deep-crawler';
-
-const USER_AGENT =
-  'Mozilla/5.0 (compatible; PortalCasaEficienteBot/1.0; +https://portalcasaeficiente.pt)';
 
 const MAX_PROGRAMS_PER_SOURCE = 250;
 
@@ -291,7 +289,7 @@ async function fetchHtmlWithRetry(
         timeout: 30000,
         maxRedirects: 5,
         headers: {
-          'User-Agent': USER_AGENT,
+          'User-Agent': CRAWLER_USER_AGENT,
           Accept: 'text/html,application/xhtml+xml,application/xml',
         },
       });

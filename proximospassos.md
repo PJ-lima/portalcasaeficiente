@@ -27,6 +27,7 @@ A regra antiga mantém-se por baixo desta: **pipeline mínimo confiável primeir
 | Storage no Supabase           | **Sim** (PDFs/docs) — ainda por implementar                         |
 | Staging separado              | **Sim** — feito, projeto Supabase próprio                           |
 | Âmbito do produto             | **Nicho "casa" na UI, schema generalizável** (campo `domain`)        |
+| Marca                         | **Radar de Apoios** + tagline "Apoios do Estado para a tua casa" (2026-08-03) |
 | Prioridade atual              | **Estado do programa → copy → alertas → elegibilidade real**         |
 
 ---
@@ -116,16 +117,20 @@ Justificação: o E-Lar esgotou 30 M€ em 6 dias. Quem não é avisado no dia, 
 - Alargar `canonical-sources.ts`: E-Lar, IFRRU/reabilitação, Porta 65, benefícios fiscais IMI/IVA. Sem inventário não há produto — o Vale Eficiência morreu e o substituto só chega em 2027.
 - `/admin`: últimos `ingestion_runs`, success rate por source, top errors, último snapshot por URL.
 
-## Fase E — SEO de dor
+## Fase E — SEO de dor ✅ (2026-08-03)
 
-Só depois de haver conteúdo verdadeiro. Alvos: "vale eficiência pagamentos atraso", "apoio janelas 2026", "apoios casa [concelho]". As páginas já existem; falta metadata, sitemap e o conteúdo de estado da Fase A.
+Alvos: "vale eficiência pagamentos atraso", "apoio janelas 2026", "apoios casa [concelho]".
+
+Feito: `metadataBase` + canonicals via `buildMetadata()`, `robots.ts`, `sitemap.ts` (revalidate 1h), JSON-LD (`Organization`/`WebSite`/`BreadcrumbList`/`GovernmentService`/`CollectionPage`), rota `/apoios/concelho/[slug]` só para concelhos com apoio municipal, `noindex` em todas as rotas privadas, OG image, e remoção de 3 links 404 no footer.
+
+Resultados e limitações em `docs/testes/FASEE_TESTES.md`. Só existe 1 página de concelho (Cascais) até o inventário da Fase D crescer.
 
 ---
 
 ## 🔭 Ainda em aberto (não agendado)
 
 - **Supabase Storage** (bucket `documents`, upload só `authenticated`) — mantém-se válido, mas só faz falta quando anexarmos PDFs a programas.
-- **Generalização para "Radar de Apoios do Estado"** — a pesquisa aponta-o como a aposta mais forte a prazo (~70% do motor já existe). O campo `domain` da Fase A é o que mantém essa porta aberta sem migração dolorosa.
+- ~~**Generalização para "Radar de Apoios do Estado"**~~ — **decidido a 2026-08-03**: a marca passou a **Radar de Apoios**, com a tagline _"Apoios do Estado para a tua casa"_. O rebrand foi feito só ao nome e à metadata; a copy de posicionamento continua a falar de casa, que é o que o inventário atual sustenta. Ver secção abaixo.
 
 ---
 
@@ -147,3 +152,33 @@ Só depois de haver conteúdo verdadeiro. Alvos: "vale eficiência pagamentos at
 Existem dois projetos Supabase: **Casa Eficiente** (main) e **Staging Casa Eficiente** (staging).
 
 No projeto Vercel `portalcasaeficiente-staging`, todas as env vars vão em **Environment = Production** — porque o branch `staging` gera Production Deployments nesse projeto. Misturar isto é a forma mais rápida de escrever em produção a pensar que se está em staging.
+
+## 🏷️ Rebrand para Radar de Apoios (2026-08-03)
+
+Feito: nome e metadata. `SITE_NAME`/`SITE_TAGLINE` em `src/lib/seo.ts` são a fonte única; os títulos das páginas passaram a ser curtos e o sufixo `| Radar de Apoios` é composto no `buildMetadata()`. Também mudaram Header, Footer, emails de recuperação de password, logs dos workers e o User-Agent dos crawlers (agora `RadarDeApoiosBot/1.0`, centralizado em `src/lib/user-agent.ts`).
+
+**Não** mudou, de propósito:
+
+- **Copy de posicionamento.** `/sobre` e `/como-funciona` continuam a falar de casa e eficiência energética, porque é o que o inventário sustenta hoje. Reposicionar antes da Fase D seria prometer apoios que ainda não temos.
+- **Logos e favicon.** Os ficheiros em `assets/media/` têm "Portal Casa Eficiente" desenhado na imagem, e o `public/og-image.png` foi gerado a partir deles. Ficam até haver assets novos — é a incoerência visível que sobra.
+- **Pasta, repositório e projeto Vercel.** Continuam `portalcasaeficiente`. Decisão à parte.
+- **`prisma/seed.ts`** mantém `teste@casaeficiente.pt` — mudar o email criaria um utilizador duplicado nas bases já semeadas.
+
+Domínio: por registar. `radardeapoios.pt` passa a ser o candidato natural.
+
+## ⚠️ Regra operacional de indexação (SEO)
+
+Consequência directa da regra acima: `NODE_ENV` e `VERCEL_ENV` valem `production` em staging **e** em produção, logo **nenhum dos dois pode decidir se o site é indexável**.
+
+- `SITE_INDEXABLE` é o único discriminador. Só o valor exacto `"true"` permite indexar; ausente ou qualquer outra coisa bloqueia tudo (`Disallow: /` + sitemap vazio + `noindex` nas páginas).
+- Pôr `SITE_INDEXABLE=true` **apenas** no projecto Vercel de produção real, e só quando o domínio estiver activo. Nunca no projecto de staging, nunca em Preview.
+- `SITE_URL` é a URL base de canonicals, sitemap, OG e JSON-LD. Sem domínio registado, deixar vazia — cai para `VERCEL_PROJECT_PRODUCTION_URL`, depois `VERCEL_URL`, depois localhost.
+- `robots.txt`, `sitemap.xml` e o `metadataBase` são resolvidos **no build**. Mudar qualquer uma destas variáveis exige **redeploy** — editar a env var na Vercel não chega.
+
+Verificação obrigatória depois de qualquer deploy de staging:
+
+```
+curl -s https://portalcasaeficiente-staging.vercel.app/robots.txt   # tem de dar Disallow: /
+```
+
+Detalhe completo em `docs/testes/FASEE_TESTES.md`.

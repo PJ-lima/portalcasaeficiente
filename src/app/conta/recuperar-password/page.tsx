@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import siteLogo from '../../../../assets/media/LogoSemFundo.png';
+import { SITE_NAME } from '@/lib/seo';
 
 export default function RecuperarPasswordPage() {
   const [email, setEmail] = useState('');
@@ -50,12 +51,12 @@ export default function RecuperarPasswordPage() {
           <Link href="/" className="inline-flex items-center gap-3">
             <Image
               src={siteLogo}
-              alt="Casa Eficiente"
+              alt={SITE_NAME}
               width={56}
               height={56}
               className="rounded-lg object-cover w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
             />
-            <span className="text-xl font-bold text-ink">Casa Eficiente</span>
+            <span className="text-xl font-bold text-ink">{SITE_NAME}</span>
           </Link>
         </div>
 
