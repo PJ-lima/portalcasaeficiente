@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-[#08281F] text-primary-200">
       <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-4">
           {/* Logo e descrição */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3">
@@ -56,11 +56,27 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal — os links para /termos, /privacidade e /contactos foram
-              removidos porque nenhuma dessas rotas existe: eram três 404 em
-              todas as páginas do site. Voltam assim que houver conteúdo real
-              (a política de privacidade é obrigatória antes de produção, o site
-              tem contas de utilizador). */}
+          {/* Legal */}
+          <div>
+            <h3 className="font-display font-semibold text-white">Legal</h3>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <Link href="/termos" className="transition hover:text-white">
+                  Termos de utilização
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacidade" className="transition hover:text-white">
+                  Política de privacidade
+                </Link>
+              </li>
+              <li>
+                <Link href="/contactos" className="transition hover:text-white">
+                  Contactos
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Disclaimer */}

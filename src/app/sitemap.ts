@@ -9,7 +9,16 @@ export const revalidate = 3600;
 
 // Allowlist explícita, nunca um scan do filesystem: é o que garante que /admin
 // e /conta não entram no sitemap por acidente ao surgir uma rota nova.
-const STATIC_ROUTES = ['/', '/apoios', '/verificar', '/como-funciona', '/sobre'] as const;
+const STATIC_ROUTES = [
+  '/',
+  '/apoios',
+  '/verificar',
+  '/como-funciona',
+  '/sobre',
+  '/termos',
+  '/privacidade',
+  '/contactos',
+] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!isIndexable()) return [];
