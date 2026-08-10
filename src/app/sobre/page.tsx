@@ -17,8 +17,8 @@ export default function SobrePage() {
                 Sobre o Radar de Apoios
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
-                O ponto de acesso aos apoios para tornar a tua casa mais confortável, 
-                eficiente e económica.
+                O ponto de acesso aos apoios do Estado para o cidadão — casa,
+                mobilidade, educação, família e mais.
               </p>
             </div>
           </div>
@@ -35,13 +35,13 @@ export default function SobrePage() {
                 <div>
                   <h2 className="text-2xl font-bold text-ink">A nossa missão</h2>
                   <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-                    <strong>Democratizar o acesso aos apoios públicos de eficiência energética em Portugal</strong>, 
+                    <strong>Democratizar o acesso aos apoios públicos em Portugal</strong>,
                     tornando simples, claro e acessível aquilo que hoje é confuso, burocrático e desigual.
                   </p>
                   <p className="mt-4 text-muted-foreground leading-relaxed">
-                    Acreditamos que todos os cidadãos devem ter acesso igual à informação sobre 
-                    apoios públicos, independentemente dos seus conhecimentos técnicos ou legais. 
-                    A burocracia não deve ser uma barreira à eficiência energética.
+                    Acreditamos que todos os cidadãos devem ter acesso igual à informação sobre
+                    apoios públicos, independentemente dos seus conhecimentos técnicos ou legais.
+                    A burocracia não deve ser uma barreira ao apoio a que tens direito.
                   </p>
 
                   <h3 className="mt-6 text-lg font-semibold text-ink">Porque isto existe</h3>
@@ -137,24 +137,24 @@ export default function SobrePage() {
                     <div className="rounded-xl bg-muted p-5">
                       <h3 className="font-semibold text-ink">Famílias</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Que querem melhorar o conforto de casa e reduzir contas de energia
+                        Que querem melhorar a casa, reduzir contas ou apoiar a educação dos filhos
                       </p>
                     </div>
-                    
+
                     <div className="rounded-xl bg-muted p-5">
-                      <h3 className="font-semibold text-ink">Proprietários de HPP</h3>
+                      <h3 className="font-semibold text-ink">Proprietários e inquilinos</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Que procuram apoios para obras de reabilitação energética
+                        Que procuram apoios para obras, renda ou compra de casa
                       </p>
                     </div>
-                    
+
                     <div className="rounded-xl bg-muted p-5">
-                      <h3 className="font-semibold text-ink">Pessoas em situação de pobreza energética</h3>
+                      <h3 className="font-semibold text-ink">Quem mais precisa</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Com frio, humidade ou contas de energia elevadas
+                        Pessoas com contas altas, casa fria ou rendimentos apertados
                       </p>
                     </div>
-                    
+
                     <div className="rounded-xl bg-muted p-5">
                       <h3 className="font-semibold text-ink">Técnicos sociais</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
@@ -179,9 +179,9 @@ export default function SobrePage() {
                 <div>
                   <h2 className="text-2xl font-bold text-ink">A nossa visão</h2>
                   <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-                    Um Portugal onde todas as famílias vivem em casas confortáveis e eficientes, 
-                    onde a informação sobre apoios públicos é acessível a todos, 
-                    e onde a transição energética não deixa ninguém para trás.
+                    Um Portugal onde a informação sobre apoios públicos é acessível a todos,
+                    onde nenhum apoio fica por pedir por falta de informação,
+                    e onde a burocracia não deixa ninguém para trás.
                   </p>
                 </div>
               </div>

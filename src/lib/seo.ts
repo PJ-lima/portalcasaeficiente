@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getSiteUrl, isIndexable } from './site-url';
 
 export const SITE_NAME = 'Radar de Apoios';
-export const SITE_TAGLINE = 'Apoios do Estado para a tua casa';
+export const SITE_TAGLINE = 'Apoios do Estado para ti';
 export const DEFAULT_OG_IMAGE = '/og-image.png';
 
 interface BuildMetadataOptions {

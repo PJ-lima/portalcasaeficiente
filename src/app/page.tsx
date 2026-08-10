@@ -7,19 +7,19 @@ import { buildMetadata, SITE_NAME, SITE_TAGLINE } from '@/lib/seo';
 export const metadata = buildMetadata({
   title: `${SITE_NAME} — ${SITE_TAGLINE}`,
   description:
-    'Há dinheiro do Estado para a tua casa. Mostramos-te que apoios existem, se ainda há verba e qual o estado real de cada programa.',
+    'Há dinheiro do Estado para ti. Mostramos-te que apoios existem, se ainda há verba e qual o estado real de cada programa.',
   path: '/',
 });
 import {
   Search,
   FileCheck,
   FolderOpen,
-  AppWindow,
-  Layers,
   Home,
-  Thermometer,
-  Sun,
-  Droplets,
+  Car,
+  GraduationCap,
+  Briefcase,
+  Users,
+  HeartPulse,
   BellRing,
   ListChecks,
   Landmark,
@@ -95,36 +95,36 @@ const features = [
   },
 ];
 
-const workTypes = [
-  {
-    icon: AppWindow,
-    title: 'Janelas eficientes',
-    description: 'Substituição por janelas com melhor isolamento térmico',
-  },
-  {
-    icon: Layers,
-    title: 'Isolamento / Capoto',
-    description: 'Isolamento térmico de paredes pelo exterior',
-  },
+const supportAreas = [
   {
     icon: Home,
-    title: 'Cobertura',
-    description: 'Isolamento térmico do telhado e do sótão',
+    title: 'Casa e obras',
+    description: 'Eficiência energética, reabilitação, renda e compra de casa',
   },
   {
-    icon: Thermometer,
-    title: 'Bomba de calor',
-    description: 'Sistemas eficientes de aquecimento e arrefecimento',
+    icon: Car,
+    title: 'Mobilidade elétrica',
+    description: 'Apoios à compra de veículos elétricos e carregadores',
   },
   {
-    icon: Sun,
-    title: 'Solar fotovoltaico',
-    description: 'Painéis solares para produção de eletricidade',
+    icon: GraduationCap,
+    title: 'Educação',
+    description: 'Bolsas de estudo, manuais escolares e formação',
   },
   {
-    icon: Droplets,
-    title: 'Aquecimento de águas',
-    description: 'Sistemas solares térmicos e bombas de calor',
+    icon: Briefcase,
+    title: 'Emprego',
+    description: 'Incentivos à contratação, estágios e apoio a quem procura',
+  },
+  {
+    icon: Users,
+    title: 'Família e social',
+    description: 'Abonos, tarifas sociais e apoios ao agregado',
+  },
+  {
+    icon: HeartPulse,
+    title: 'Saúde',
+    description: 'Comparticipações e apoios na área da saúde',
   },
 ];
 
@@ -147,13 +147,13 @@ export default function HomePage() {
                   <span className="label-tag inline-block bg-success px-3 text-success-foreground">
                     dinheiro
                   </span>{' '}
-                  do Estado para obras na tua casa
+                  do Estado para ti
                 </h1>
 
                 <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
-                  Dizemos-te quais os apoios que existem para o teu concelho, se
-                  tens direito, e — o que ninguém te diz — se ainda há verba.
-                  Sem horas perdidas em PDFs.
+                  Casa, mobilidade elétrica, educação, família. Dizemos-te que
+                  apoios existem para ti, se tens direito, e — o que ninguém te
+                  diz — se ainda há verba. Sem horas perdidas em PDFs.
                 </p>
 
                 {/* Search Box */}
@@ -290,14 +290,13 @@ export default function HomePage() {
         {/* Tipos de apoio */}
         <section className="py-16 sm:py-24">
           <div className="container">
-            <p className="section-eyebrow">Tipos de obras apoiadas</p>
+            <p className="section-eyebrow">Áreas de apoio</p>
             <h2 className="mt-3 max-w-2xl text-2xl font-bold sm:text-3xl">
-              Há apoios para quase todas as obras que aquecem, arrefecem ou
-              poupam
+              Da casa à educação, há mais apoios do que imaginas
             </h2>
 
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {workTypes.map((item) => (
+              {supportAreas.map((item) => (
                 <div
                   key={item.title}
                   className="flex items-start gap-4 rounded-xl border border-border bg-card p-6 shadow-card transition hover:border-primary-200 hover:shadow-card-hover"

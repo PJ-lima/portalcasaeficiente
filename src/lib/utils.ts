@@ -175,6 +175,12 @@ export const programDomainLabels: Record<string, string> = {
   HOUSING_ACCESS: 'Acesso à habitação',
   TAX_BENEFIT: 'Benefício fiscal',
   SOCIAL: 'Apoio social',
+  MOBILITY: 'Mobilidade',
+  EDUCATION: 'Educação',
+  EMPLOYMENT: 'Emprego',
+  HEALTH: 'Saúde',
+  FAMILY: 'Família',
+  AGRICULTURE: 'Agricultura',
   OTHER: 'Outro',
 };
 

@@ -17,7 +17,7 @@ export default function ComoFuncionaPage() {
                 Como funciona o Radar de Apoios
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
-                Ajudamos-te a navegar o mundo dos apoios públicos à eficiência energética 
+                Ajudamos-te a navegar o mundo dos apoios públicos
                 de forma simples, clara e transparente.
               </p>
             </div>
@@ -36,8 +36,9 @@ export default function ComoFuncionaPage() {
                   <div>
                     <h3 className="font-semibold text-ink">Agregamos informação oficial</h3>
                     <p className="mt-1 text-muted-foreground">
-                      Pesquisamos diariamente o Diário da República e o Fundo Ambiental 
-                      para encontrar todos os apoios disponíveis, nacionais e municipais.
+                      Pesquisamos diariamente as fontes oficiais — Fundo Ambiental,
+                      fundos europeus, portais da habitação e câmaras municipais —
+                      para encontrar os apoios disponíveis ao cidadão.
                     </p>
                   </div>
                 </div>
@@ -117,10 +118,10 @@ export default function ComoFuncionaPage() {
                 <div className="flex gap-4">
                   <XCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-ink">Não vendemos obras</h3>
+                    <h3 className="font-semibold text-ink">Não vendemos nada</h3>
                     <p className="mt-1 text-muted-foreground">
-                      Não fazemos instalações, não vendemos equipamentos, 
-                      não somos uma empresa de construção.
+                      Não fazemos obras, não vendemos equipamentos nem serviços.
+                      Só informação.
                     </p>
                   </div>
                 </div>
@@ -130,7 +131,7 @@ export default function ComoFuncionaPage() {
                   <div>
                     <h3 className="font-semibold text-ink">Não favorecemos marcas</h3>
                     <p className="mt-1 text-muted-foreground">
-                      Não temos parcerias comerciais com instaladores ou fabricantes. 
+                      Não temos parcerias comerciais com fornecedores ou fabricantes.
                       A nossa informação é imparcial.
                     </p>
                   </div>
@@ -263,6 +264,6 @@ export default function ComoFuncionaPage() {
 
 export const metadata = buildMetadata({
   title: 'Como Funciona',
-  description: 'Descobre como o Radar de Apoios te ajuda a encontrar e candidatar-te a apoios do Estado para a tua casa.',
+  description: 'Descobre como o Radar de Apoios te ajuda a encontrar e candidatar-te a apoios do Estado.',
   path: '/como-funciona',
 });
