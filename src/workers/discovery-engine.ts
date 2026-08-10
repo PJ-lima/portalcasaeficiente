@@ -8,13 +8,14 @@ import { calculateContentHash, normalizeText, WorkerLogger } from '../lib/worker
 import { withIngestionRun } from '../lib/ingestion';
 import { queueNewProgramNotifications } from '../lib/notifications';
 import { CRAWLER_USER_AGENT } from '../lib/user-agent';
-import { 
-  crawlPageForDetails, 
-  shouldBlockTitle, 
+import {
+  crawlPageForDetails,
+  shouldBlockTitle,
   isRelevantToEnergyEfficiency,
   type SupportProgramDetails,
-  type SupportCategory 
+  type SupportCategory
 } from './deep-crawler';
+import { classifyBeneficiary } from './beneficiary-gate';
 
 const MAX_PROGRAMS_PER_SOURCE = 250;
 
@@ -430,6 +431,23 @@ async function persistCandidate(params: {
     return 'skipped';
   }
 
+  // Gate de beneficiário (RC2): programas cujo texto diz que o dinheiro vai
+  // para empresas/autarquias/entidades não entram no radar. Só bloqueia a
+  // CRIAÇÃO — um programa já existente continua a ser atualizado (o veredicto
+  // fica no payload e a limpeza retroativa é um passo separado e revisável).
+  // Sem texto enriquecido o veredicto é UNKNOWN e o candidato persiste: será
+  // reclassificado quando o deep crawl o apanhar.
+  const beneficiaryGate = classifyBeneficiary(candidate);
+  if (beneficiaryGate.verdict === 'ORGANIZATION' && !existingByUrl?.programId) {
+    logger.info('Candidato excluído pelo gate de beneficiário', {
+      title: candidate.title,
+      url: candidate.url,
+      scope: beneficiaryGate.scope,
+      matched: beneficiaryGate.matchedNegative,
+    });
+    return 'skipped';
+  }
+
   const freshPayload = {
     sourceId: source.id,
     sourceName: source.name,
@@ -450,6 +468,10 @@ async function persistCandidate(params: {
     legislation: candidate.legislation,
     faq: candidate.faq,
     rawSections: candidate.rawSections,
+    beneficiaryGate:
+      beneficiaryGate.scope === 'none'
+        ? undefined
+        : { ...beneficiaryGate, classifiedAt: now.toISOString() },
     ...(candidate.metadata ?? {}),
   };
 
@@ -694,19 +716,20 @@ async function runCanonicalSourceWorkerInner(
   const enrichLimit = Number.isFinite(parsedLimit) ? parsedLimit : 25;
   // Só os URLs, não os blobs: o operador jsonb `?` testa a presença de
   // rawSections sem puxar o texto das secções para memória.
-  const alreadyEnriched = new Set<string>(
+  const knownSources =
     candidates.length > 0
-      ? (
-          await prisma.$queryRaw<Array<{ source_url: string }>>`
-            SELECT source_url FROM sources
-            WHERE source_url IN (${Prisma.join(candidates.map((candidate) => candidate.url))})
-              AND raw_payload ? 'rawSections'
-          `
-        ).map((row) => row.source_url)
-      : [],
+      ? await prisma.$queryRaw<Array<{ source_url: string; enriched: boolean }>>`
+          SELECT source_url, raw_payload ? 'rawSections' AS enriched FROM sources
+          WHERE source_url IN (${Prisma.join(candidates.map((candidate) => candidate.url))})
+        `
+      : [];
+  const existingUrls = new Set<string>(knownSources.map((row) => row.source_url));
+  const alreadyEnriched = new Set<string>(
+    knownSources.filter((row) => row.enriched).map((row) => row.source_url),
   );
   let enrichAttempts = 0;
   let enrichedThisRun = 0;
+  let deferredNew = 0;
 
   for (const candidate of candidates) {
     let candidateToPersist = candidate;
@@ -728,6 +751,21 @@ async function runCanonicalSourceWorkerInner(
         enrichedThisRun += 1;
         forceUpdate = true;
       }
+    }
+
+    // Candidato NOVO só persiste depois de enriquecido: sem texto o gate de
+    // beneficiário não consegue decidir e o programa entrava como UNKNOWN —
+    // era assim que o ruído (avisos para empresas/autarquias) voltava a
+    // entrar depois de purgado. Fica para a corrida seguinte, que o apanha
+    // dentro do cap de enrichment. Fontes já persistidas atualizam como antes.
+    const isEnrichedNow =
+      alreadyEnriched.has(candidate.url) ||
+      (candidateToPersist.rawSections &&
+        Object.keys(candidateToPersist.rawSections).length > 0);
+    if (!existingUrls.has(candidate.url) && !isEnrichedNow) {
+      deferredNew += 1;
+      stats.skipped += 1;
+      continue;
     }
 
     try {
@@ -765,6 +803,7 @@ async function runCanonicalSourceWorkerInner(
     enrichAttempts,
     enrichedThisRun,
     enrichFailures: enrichAttempts - enrichedThisRun,
+    deferredNew,
     pendingEnrichment: Math.max(
       0,
       candidates.length - alreadyEnriched.size - enrichedThisRun,
