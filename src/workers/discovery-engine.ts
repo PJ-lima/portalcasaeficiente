@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GeoLevel, ProgramStatus, type ProgramType } from '@prisma/client';
+import { GeoLevel, Prisma, ProgramStatus, type ProgramType } from '@prisma/client';
 import * as cheerio from 'cheerio';
 import { prisma } from '../lib/prisma';
 import { slugify } from '../lib/utils';
@@ -399,6 +399,10 @@ async function persistCandidate(params: {
   logger: WorkerLogger;
   overrideProgramType?: ProgramType;
   overrideEntity?: string;
+  /// Persiste mesmo com contentHash igual. Necessário quando o candidato
+  /// foi enriquecido pelo deep crawl: o hash cobre título+descrição+url,
+  /// não os campos enriquecidos — sem isto o enriquecimento perdia-se.
+  forceUpdate?: boolean;
 }): Promise<'new' | 'updated' | 'skipped'> {
   const { source, candidate, logger, overrideEntity, overrideProgramType } = params;
   const programType = overrideProgramType ?? source.programType;
@@ -418,14 +422,15 @@ async function persistCandidate(params: {
       id: true,
       programId: true,
       contentHash: true,
+      rawPayload: true,
     },
   });
 
-  if (existingByUrl?.contentHash === contentHash) {
+  if (!params.forceUpdate && existingByUrl?.contentHash === contentHash) {
     return 'skipped';
   }
 
-  const payload = {
+  const freshPayload = {
     sourceId: source.id,
     sourceName: source.name,
     title: candidate.title,
@@ -447,6 +452,22 @@ async function persistCandidate(params: {
     rawSections: candidate.rawSections,
     ...(candidate.metadata ?? {}),
   };
+
+  // Merge sobre o payload existente, nunca replace: um update disparado por
+  // mudança de título/descrição chega aqui com um candidato NÃO enriquecido
+  // (campos deep-crawl undefined) — um replace apagaria silenciosamente o
+  // enriquecimento captado em corridas anteriores. Chaves undefined saem
+  // antes do merge para não sobrepor valores existentes.
+  const definedEntries = Object.fromEntries(
+    Object.entries(freshPayload).filter(([, value]) => value !== undefined),
+  );
+  const previousPayload =
+    existingByUrl?.rawPayload &&
+    typeof existingByUrl.rawPayload === 'object' &&
+    !Array.isArray(existingByUrl.rawPayload)
+      ? (existingByUrl.rawPayload as Record<string, unknown>)
+      : {};
+  const payload = { ...previousPayload, ...definedEntries } as Prisma.InputJsonObject;
 
   if (existingByUrl?.programId) {
     await prisma.program.update({
@@ -664,14 +685,59 @@ async function runCanonicalSourceWorkerInner(
   const candidates = Array.from(candidatesByUrl.values()).slice(0, MAX_PROGRAMS_PER_SOURCE);
   stats.found = candidates.length;
 
+  // Deep crawl com cap por corrida, retomável: cada corrida enriquece até
+  // ENRICH_LIMIT candidatos ainda sem rawSections; as corridas seguintes
+  // apanham os restantes. Sem o cap, 250 páginas x N fontes estoiravam o
+  // timeout do cron. Antes disto o enrichment só corria no caminho
+  // municipal — as fontes nacionais persistiam título+URL e mais nada.
+  const parsedLimit = Number(process.env.NATIONAL_ENRICH_LIMIT);
+  const enrichLimit = Number.isFinite(parsedLimit) ? parsedLimit : 25;
+  // Só os URLs, não os blobs: o operador jsonb `?` testa a presença de
+  // rawSections sem puxar o texto das secções para memória.
+  const alreadyEnriched = new Set<string>(
+    candidates.length > 0
+      ? (
+          await prisma.$queryRaw<Array<{ source_url: string }>>`
+            SELECT source_url FROM sources
+            WHERE source_url IN (${Prisma.join(candidates.map((candidate) => candidate.url))})
+              AND raw_payload ? 'rawSections'
+          `
+        ).map((row) => row.source_url)
+      : [],
+  );
+  let enrichAttempts = 0;
+  let enrichedThisRun = 0;
+
   for (const candidate of candidates) {
+    let candidateToPersist = candidate;
+    let forceUpdate = false;
+
+    if (!alreadyEnriched.has(candidate.url) && enrichAttempts < enrichLimit) {
+      enrichAttempts += 1;
+      const enriched = await enrichCandidateWithDeepCrawl(candidate, logger, {
+        delayMs: options?.rateLimitMs ?? 800,
+      });
+      // forceUpdate só quando o crawl produziu secções: em falha o
+      // enrichCandidateWithDeepCrawl devolve o candidato original e um
+      // force-persist aqui geraria updates (e ProgramVersions) a cada
+      // corrida sem dados novos. URLs que falham voltam a ser tentados
+      // na corrida seguinte — falhas permanentes consomem budget, mas o
+      // cap é por corrida e o log denuncia-as.
+      if (enriched.rawSections && Object.keys(enriched.rawSections).length > 0) {
+        candidateToPersist = enriched;
+        enrichedThisRun += 1;
+        forceUpdate = true;
+      }
+    }
+
     try {
       const outcome = await persistCandidate({
         source,
-        candidate,
+        candidate: candidateToPersist,
         logger,
         overrideProgramType: options?.overrideProgramType,
         overrideEntity: options?.overrideEntity,
+        forceUpdate,
       });
 
       if (outcome === 'new') stats.new += 1;
@@ -696,6 +762,13 @@ async function runCanonicalSourceWorkerInner(
   logger.info('Worker canónico concluído', {
     source: source.id,
     stats,
+    enrichAttempts,
+    enrichedThisRun,
+    enrichFailures: enrichAttempts - enrichedThisRun,
+    pendingEnrichment: Math.max(
+      0,
+      candidates.length - alreadyEnriched.size - enrichedThisRun,
+    ),
   });
 
   return {
