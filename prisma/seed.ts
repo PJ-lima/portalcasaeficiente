@@ -2,18 +2,28 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const TEST_EMAIL = "teste@radardeapoios.pt";
+const LEGACY_TEST_EMAIL = "teste@casaeficiente.pt";
+
 async function main() {
   console.log("🌱 Seed (mínimo) - Radar de Apoios");
 
+  // 0) Migrar o utilizador de teste antigo, se existir — evita duplicados
+  // nas bases já semeadas com o email da marca anterior.
+  await prisma.user.updateMany({
+    where: { email: LEGACY_TEST_EMAIL },
+    data: { email: TEST_EMAIL },
+  });
+
   // 1) Criar utilizador de teste
   const testUser = await prisma.user.upsert({
-    where: { email: "teste@casaeficiente.pt" },
+    where: { email: TEST_EMAIL },
     update: {
       name: "Utilizador Teste",
       nif: "123456789",
     },
     create: {
-      email: "teste@casaeficiente.pt",
+      email: TEST_EMAIL,
       name: "Utilizador Teste",
       nif: "123456789",
       role: "user",

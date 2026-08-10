@@ -1,18 +1,15 @@
 # Radar de Apoios
 
-_Apoios do Estado para a tua casa._
+_Radar dos apoios do Estado para cidadãos — casa, mobilidade, educação e mais._
 
-Antes chamava-se Portal Casa Eficiente; a pasta e o repositório ainda usam o nome antigo (`portalcasaeficiente`), tal como o projeto Vercel. Renomear isso é decisão à parte — o código, a UI e a metadata já usam o nome novo.
+Antes chamava-se Portal Casa Eficiente. O repositório GitHub e o projeto Vercel já usam `radar-de-apoios`; a pasta local pode ainda usar o nome antigo.
 
-Estrutura inicial do projecto preparada para desenvolvimento.
-
-Tree alvo (exemplo):
+Estrutura do projecto:
 
 ```
-portalcasaeficiente/
+radar-de-apoios/
 ├─ README.md
 ├─ package.json
-├─ pnpm-lock.yaml
 ├─ next.config.js
 ├─ tsconfig.json
 ├─ tailwind.config.ts
@@ -21,15 +18,15 @@ portalcasaeficiente/
 ├─ .gitignore
 ├─ prisma/
 ├─ public/
-├─ media/
+├─ assets/
 ├─ src/
 └─ scripts/
 ```
 
 Instruções rápidas:
 
-- Instalar dependências: `pnpm install` (ou `npm install`)
-- Correr em dev: `pnpm dev`
+- Instalar dependências: `npm install`
+- Correr em dev: `npm run dev`
 - Base de dados em dev: `npm run db:migrate:dev`
 - Aplicar migrations em ambiente alvo: `npm run db:migrate:deploy`
 
@@ -50,6 +47,11 @@ Validação de ambiente:
 
 Objetivo: ter um ambiente separado de produção para validar ingestão, autenticação e cron.
 
+Projetos atuais:
+
+- Vercel: `radar-de-apoios-staging` (o branch `staging` gera Production Deployments neste projeto — env vars vão em Environment = Production)
+- Supabase: `Staging Radar de Apoios` (`migmaalumuabevprkukc`)
+
 ### 1) Criar Supabase de staging (separado)
 
 - Criar um novo projeto Supabase dedicado a staging.
@@ -57,14 +59,14 @@ Objetivo: ter um ambiente separado de produção para validar ingestão, autenti
   - `DATABASE_URL`: usar a URL pooler (porta `6543`, `pgbouncer=true`).
   - `DIRECT_URL`: usar a URL direta (porta `5432`) para migrações.
 
-### 2) Configurar variáveis no Vercel (environment Preview ou Staging)
+### 2) Configurar variáveis no Vercel
 
 Obrigatórias:
 
 - `DATABASE_URL`
 - `DIRECT_URL`
 - `AUTH_SECRET`
-- `NEXTAUTH_URL` (ex: `https://<teu-staging>.vercel.app`)
+- `NEXTAUTH_URL` (ex: `https://radar-de-apoios-staging.vercel.app`)
 - `CRON_SECRET`
 
 Recomendadas:
@@ -90,5 +92,3 @@ Opcional tuning ingestão:
   - `npm run env:check:staging`
 - Trigger manual de ingestão admin ou cron endpoint:
   - `GET /api/cron/ingest?source=all` com header `Authorization: Bearer <CRON_SECRET>`
-
-Adicione notas do projecto aqui.

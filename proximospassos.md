@@ -1,6 +1,24 @@
-# Portal Casa Eficiente — Próximos Passos (Documento de Execução)
+# Radar de Apoios — Próximos Passos (Documento de Execução)
 
-_Revisto a 2026-08-01 após a pesquisa de mercado de 2026-07-19 (`docs/research/2026-07-19-dores-portugueses.md`). A versão anterior deste documento está no histórico do git._
+_Revisto a 2026-08-10: âmbito alargado a radar geral de apoios ao cidadão (ver decisão abaixo). Revisão anterior: 2026-08-01, após a pesquisa de mercado de 2026-07-19 (`docs/research/2026-07-19-dores-portugueses.md`). Versões anteriores no histórico do git._
+
+---
+
+## 🧭 Decisão de âmbito (2026-08-10) — substitui "nicho casa"
+
+**O produto é um radar geral de apoios ao cidadão** — casa, mobilidade elétrica, educação, emprego, família, etc. Não é um site de eficiência energética nem só de habitação.
+
+A regra de relevância deixa de ser o tema e passa a ser o beneficiário:
+
+> Um apoio pertence ao site se **quem recebe o dinheiro ou o benefício é uma pessoa singular (ou agregado familiar/condomínio), diretamente.**
+
+Fora: empresas, PME, autarquias, associações, escolas, entidades formadoras, centros de investigação. O tema deixa de filtrar e passa a **categorizar** (enum `domain`, a alargar com MOBILITY, EDUCATION, EMPLOYMENT, HEALTH, FAMILY, AGRICULTURE).
+
+Consequências pendentes desta decisão:
+- Reescrever copy de posicionamento (`/`, `/sobre`, `/como-funciona`) e tagline em `src/lib/seo.ts` — deixa de ser "para a tua casa".
+- Migração do enum `ProgramDomain` + novos domínios.
+- Substituir o filtro por keywords de energia pelo gate de beneficiário na ingestão (depende do deep crawl funcionar — ver diagnóstico 2026-08-10 no fim).
+- `UserDossier`/elegibilidade continuam centrados na casa — generalizar mais tarde, não bloqueia.
 
 ---
 
@@ -26,8 +44,9 @@ A regra antiga mantém-se por baixo desta: **pipeline mínimo confiável primeir
 | Versionado vs update-in-place | **Versionado** (aplica-se agora também ao estado do programa)       |
 | Storage no Supabase           | **Sim** (PDFs/docs) — ainda por implementar                         |
 | Staging separado              | **Sim** — feito, projeto Supabase próprio                           |
-| Âmbito do produto             | **Nicho "casa" na UI, schema generalizável** (campo `domain`)        |
-| Marca                         | **Radar de Apoios** + tagline "Apoios do Estado para a tua casa" (2026-08-03) |
+| Âmbito do produto             | ~~Nicho "casa"~~ → **Radar geral de apoios ao cidadão** (2026-08-10, ver secção acima) |
+| Marca                         | **Radar de Apoios**; tagline "Apoios do Estado para a tua casa" a substituir por âmbito geral (proposta: "Apoios do Estado para ti") |
+| Nomes                         | GitHub `PJ-lima/radar-de-apoios` + Vercel `radar-de-apoios-staging` renomeados a 2026-08-10; Supabase já era `Radar de Apoios`/`Staging Radar de Apoios` |
 | Prioridade atual              | **Estado do programa → copy → alertas → elegibilidade real**         |
 
 ---
@@ -130,7 +149,7 @@ Resultados e limitações em `docs/testes/FASEE_TESTES.md`. Só existe 1 página
 ## 🔭 Ainda em aberto (não agendado)
 
 - **Supabase Storage** (bucket `documents`, upload só `authenticated`) — mantém-se válido, mas só faz falta quando anexarmos PDFs a programas.
-- ~~**Generalização para "Radar de Apoios do Estado"**~~ — **decidido a 2026-08-03**: a marca passou a **Radar de Apoios**, com a tagline _"Apoios do Estado para a tua casa"_. O rebrand foi feito só ao nome e à metadata; a copy de posicionamento continua a falar de casa, que é o que o inventário atual sustenta. Ver secção abaixo.
+- ~~**Generalização para "Radar de Apoios do Estado"**~~ — **decidido a 2026-08-10**: generalização total (ver "Decisão de âmbito" no topo). A decisão intermédia de 2026-08-03 (nome novo, nicho casa mantido) foi ultrapassada.
 
 ---
 
@@ -151,7 +170,7 @@ Resultados e limitações em `docs/testes/FASEE_TESTES.md`. Só existe 1 página
 
 Existem dois projetos Supabase: **Casa Eficiente** (main) e **Staging Casa Eficiente** (staging).
 
-No projeto Vercel `portalcasaeficiente-staging`, todas as env vars vão em **Environment = Production** — porque o branch `staging` gera Production Deployments nesse projeto. Misturar isto é a forma mais rápida de escrever em produção a pensar que se está em staging.
+No projeto Vercel `radar-de-apoios-staging`, todas as env vars vão em **Environment = Production** — porque o branch `staging` gera Production Deployments nesse projeto. Misturar isto é a forma mais rápida de escrever em produção a pensar que se está em staging.
 
 ## 🏷️ Rebrand para Radar de Apoios (2026-08-03)
 
@@ -161,8 +180,8 @@ Feito: nome e metadata. `SITE_NAME`/`SITE_TAGLINE` em `src/lib/seo.ts` são a fo
 
 - **Copy de posicionamento.** `/sobre` e `/como-funciona` continuam a falar de casa e eficiência energética, porque é o que o inventário sustenta hoje. Reposicionar antes da Fase D seria prometer apoios que ainda não temos.
 - **Logos e favicon.** Os ficheiros em `assets/media/` têm "Portal Casa Eficiente" desenhado na imagem, e o `public/og-image.png` foi gerado a partir deles. Ficam até haver assets novos — é a incoerência visível que sobra.
-- **Pasta, repositório e projeto Vercel.** Continuam `portalcasaeficiente`. Decisão à parte.
-- **`prisma/seed.ts`** mantém `teste@casaeficiente.pt` — mudar o email criaria um utilizador duplicado nas bases já semeadas.
+- ~~**Pasta, repositório e projeto Vercel.**~~ Repositório (`PJ-lima/radar-de-apoios`) e projeto Vercel (`radar-de-apoios-staging`) renomeados a 2026-08-10, com `NEXTAUTH_URL` atualizado e redeploy. Falta só a pasta local.
+- ~~**`prisma/seed.ts`**~~ — atualizado a 2026-08-10 para `teste@radardeapoios.pt`, com `updateMany` prévio que renomeia o email antigo nas bases já semeadas (sem duplicados).
 
 Domínio: por registar. `radardeapoios.pt` passa a ser o candidato natural.
 
@@ -178,7 +197,18 @@ Consequência directa da regra acima: `NODE_ENV` e `VERCEL_ENV` valem `productio
 Verificação obrigatória depois de qualquer deploy de staging:
 
 ```
-curl -s https://portalcasaeficiente-staging.vercel.app/robots.txt   # tem de dar Disallow: /
+curl -s https://radar-de-apoios-staging.vercel.app/robots.txt   # tem de dar Disallow: /
 ```
 
 Detalhe completo em `docs/testes/FASEE_TESTES.md`.
+
+---
+
+## 🔬 Diagnóstico da ingestão (2026-08-10)
+
+Dois root causes confirmados com dados de staging (281 programas, 296 sources):
+
+1. **O deep crawl nunca corre nas fontes nacionais.** `enrichCandidateWithDeepCrawl` só é chamado em `municipal-discovery.ts:620`. O caminho nacional (`runCanonicalSourceWorkerInner` em `discovery-engine.ts`) vai de `discoverProgramsFromUrl` direto a `persistCandidate` sem enriquecer. Evidência: 0/281 sources nacionais com `rawSections`/`description`/`beneficiaries`; 12/12 municipais com `rawSections`. Isto explica também os 98% de estado `UNKNOWN` — sem página buscada não há texto de estado. **Um bug, dois sintomas.**
+2. **O filtro de relevância é no-op.** `CORE_KEYWORDS` contém `aviso`/`apoio`/`candidatura` e o `searchableText` inclui o URL — em `portugal2030.pt/aviso-2024/...` tudo passa (gate de tema e gate de intenção batem na mesma palavra do URL). Por isso entraram 217 avisos do Portugal 2030 para empresas/autarquias.
+
+Plano: (1) ligar enrichment ao caminho nacional com cap por corrida retomável (não estoirar o timeout do cron); (2) substituir o filtro de keywords de energia pelo gate de beneficiário (precisa do texto que o enrichment traz); (3) migração `ProgramDomain`; (4) fontes novas (IEFP, Segurança Social, DGES, ePortugal, AT).
