@@ -39,6 +39,16 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> =
   // (/requerimentos-para-pedidos-de-apoio/apoio-a-natalidade/) é apoio real.
   { pattern: /\/formularios\/?$/, reason: 'url: índice de formulários' },
   { pattern: /\/requerimentos-para-pedidos-de-apoio\/?$/, reason: 'url: índice de requerimentos' },
+  // DGES (dges-bolsas, smoke 2026-08-11): páginas de acesso/admissão ao ensino
+  // superior e estatísticas — não são bolsas nem apoios candidatáveis, mas
+  // batem nas keywords amplas ("estudante", "ensino superior", "candidatura")
+  // por estarem no mesmo menu de navegação da página de bolsas.
+  { pattern: /dges\.gov\.pt\/pt\/pagina\/concursos-especiais/, reason: 'url: dges — índice de concursos especiais' },
+  { pattern: /dges\.gov\.pt\/pt\/pagina\/concurso-especial-para-estudantes/, reason: 'url: dges — concurso de acesso, não é apoio' },
+  { pattern: /dges\.gov\.pt\/pt\/pagina\/acesso-superior-candidatura/, reason: 'url: dges — candidatura ao acesso, não é apoio' },
+  { pattern: /dges\.gov\.pt\/pt\/pagina\/regime-geral-ensino-superior/, reason: 'url: dges — estatísticas de acesso' },
+  { pattern: /dges\.gov\.pt\/pt\/pagina\/prazos-de-candidatura/, reason: 'url: dges — página de prazos, não é apoio' },
+  { pattern: /dges\.gov\.pt\/pt\/incluies\b/, reason: 'url: dges — balcão/índice IncluiES' },
 ];
 
 /// Títulos (normalizados) de páginas de serviço/índice ou de conteúdo
