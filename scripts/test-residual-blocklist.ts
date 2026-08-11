@@ -54,6 +54,7 @@ check('dges acesso superior privado', { title: 'Acesso Superior - Candidatura ao
 check('dges estatísticas acesso', { title: 'Estatísticas do Acesso ao Ensino Superior Público - 1997 a 2025', url: 'https://www.dges.gov.pt/pt/pagina/regime-geral-ensino-superior-publico-concurso-nacional-de-acesso?plid=593' }, true);
 check('dges prazos de candidatura', { title: 'Prazos de Candidatura', url: 'https://www.dges.gov.pt/pt/pagina/prazos-de-candidatura?plid=373' }, true);
 check('dges balcão incluies', { title: 'Balcão IncluiES', url: 'https://www.dges.gov.pt/pt/incluies?plid=1752' }, true);
+check('iefp inscrição para emprego', { title: 'Inscrição para Emprego', url: 'https://www.iefp.pt/inscricao-para-emprego' }, true);
 
 // === NÃO pode bloquear (apoios genuínos do mesmo smoke) ===
 check('bolsa de estudo', { title: 'Bolsa de estudo', url: 'https://cm-corvo.pt/servicos/formularios/requerimentos-para-pedidos-de-apoio/bolsa-de-estudo/' }, false);
@@ -67,6 +68,7 @@ check('apoio aquisição habitação nordeste', { title: 'Alteração do Projeto
 check('candidatura a apoios horta', { title: 'Candidatura a Apoios', url: 'http://www.cmhorta.pt/index.php/cultura/candidatura-a-apoios' }, false);
 check('apoio atividade desportiva', { title: 'Apoio à atividade desportiva', url: 'https://cm-corvo.pt/servicos/formularios/requerimentos-para-pedidos-de-apoio/apoio-a-atividade-desportiva/' }, false);
 check('dges candidatura online bolsas', { title: 'Candidatura Online - Bolsas de Estudo', url: 'https://www.dges.gov.pt/wwwBeOn/?plid=373' }, false);
+check('iefp aviso centros qualifica', { title: 'Aviso para Apresentação de Candidaturas ao Apoio Concedido pelo IEFP, I.P., aos CENTROS QUALIFICA da Área Metropolitana de Lisboa', url: 'https://www.iefp.pt/aviso-para-apresentacao-de-candidaturas-ao-apoio-concedido-pelo-iefp-aos-centros-qualifica-da-area-metropolitana-de-lisboa' }, false);
 
 if (failures > 0) {
   console.error(`\n${failures} teste(s) falhado(s).`);

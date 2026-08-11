@@ -49,6 +49,10 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> =
   { pattern: /dges\.gov\.pt\/pt\/pagina\/regime-geral-ensino-superior/, reason: 'url: dges — estatísticas de acesso' },
   { pattern: /dges\.gov\.pt\/pt\/pagina\/prazos-de-candidatura/, reason: 'url: dges — página de prazos, não é apoio' },
   { pattern: /dges\.gov\.pt\/pt\/incluies\b/, reason: 'url: dges — balcão/índice IncluiES' },
+  // IEFP (iefp-apoios, smoke 2026-08-11): página de inscrição para emprego é
+  // o portal de acesso aos serviços (registo de desempregado), não um apoio
+  // candidatável em si — mesmo padrão do "acesso-superior-candidatura" do DGES.
+  { pattern: /iefp\.pt\/inscricao-para-emprego\b/, reason: 'url: iefp — inscrição de serviço, não é apoio' },
 ];
 
 /// Títulos (normalizados) de páginas de serviço/índice ou de conteúdo
