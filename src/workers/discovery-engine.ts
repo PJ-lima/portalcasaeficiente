@@ -16,6 +16,7 @@ import {
   type SupportCategory
 } from './deep-crawler';
 import { classifyBeneficiary } from './beneficiary-gate';
+import { checkResidual } from './residual-blocklist';
 import { extractStatus } from './status-extractor';
 
 const MAX_PROGRAMS_PER_SOURCE = 250;
@@ -426,6 +427,18 @@ async function persistCandidate(params: {
     return 'skipped';
   }
 
+  // Blocklist do residual (RC3): listagens por categoria, formulários,
+  // editais de trânsito e afins nunca são programas — bloqueia a criação.
+  const residual = checkResidual({ title: candidate.title, url: candidate.url });
+  if (residual.blocked && !existingByUrl?.programId) {
+    logger.info('Candidato excluído pela blocklist de residual', {
+      title: candidate.title,
+      url: candidate.url,
+      reason: residual.reason,
+    });
+    return 'skipped';
+  }
+
   // Gate de beneficiário (RC2): programas cujo texto diz que o dinheiro vai
   // para empresas/autarquias/entidades não entram no radar. Só bloqueia a
   // CRIAÇÃO — um programa já existente continua a ser atualizado (o veredicto
@@ -554,6 +567,24 @@ async function persistCandidate(params: {
   });
 
   if (existingByHash) {
+    return 'skipped';
+  }
+
+  // Dedup na criação (RC3): o Fundo Ambiental repete o mesmo tema como aviso
+  // anual ("Resíduos e Economia Circular" 2019/2020/2022/...) — um programa
+  // por título+entidade chega; o mais antigo não acrescenta nada ao radar.
+  const existingByTitle = await prisma.program.findFirst({
+    where: {
+      title: { equals: candidate.title, mode: 'insensitive' },
+      entity: entity ?? undefined,
+    },
+    select: { id: true },
+  });
+  if (existingByTitle) {
+    logger.info('Candidato ignorado: programa com mesmo título e entidade já existe', {
+      title: candidate.title,
+      url: candidate.url,
+    });
     return 'skipped';
   }
 

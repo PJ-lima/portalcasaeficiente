@@ -82,6 +82,11 @@ const STRONG_NEGATIVE = [
   'entidades gestoras',
   'autarquias locais',
   'entidades empregadoras',
+  // Vocabulário de aviso P2030 que aparece logo no TÍTULO ("Investimento
+  // Empresarial Produtivo", "TeSP – Entidades Públicas") — inequívoco mesmo
+  // sem texto enriquecido, o que importa quando o deep crawl falha.
+  'empresarial',
+  'entidades publicas',
 ] as const;
 
 const TARGETED_NEGATIVE = [
