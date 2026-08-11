@@ -33,6 +33,7 @@ export type DirectIngestSourceId =
   | 'ifrru-reabilitacao'
   | 'dgeg-apoios-energia'
   | 'adene-casa-mais'
+  | 'dges-bolsas'
   | 'diario-republica'
   | 'municipios-portugal'
   | 'cascais';
@@ -102,6 +103,12 @@ const DIRECT_SOURCE_DESCRIPTORS: SourceDescriptor[] = [
     description: 'Discovery de incentivos e soluções de eficiência.',
   },
   {
+    id: 'dges-bolsas',
+    name: 'DGES — Bolsas e Apoios ao Estudante',
+    type: 'NATIONAL',
+    description: 'Bolsas de estudo e apoios candidatáveis do ensino superior.',
+  },
+  {
     id: 'diario-republica',
     name: 'Diário da República',
     type: 'LEGAL_BACKSTOP',
@@ -150,6 +157,7 @@ const DIRECT_WORKERS: Record<DirectIngestSourceId, WorkerFn> = {
   'ifrru-reabilitacao': () => ingestNationalSource('ifrru-reabilitacao'),
   'dgeg-apoios-energia': () => ingestNationalSource('dgeg-apoios-energia'),
   'adene-casa-mais': () => ingestNationalSource('adene-casa-mais'),
+  'dges-bolsas': () => ingestNationalSource('dges-bolsas'),
   'diario-republica': ingestDiarioRepublica,
   'municipios-portugal': ingestMunicipalDiscovery,
   'cascais': ingestCascais,

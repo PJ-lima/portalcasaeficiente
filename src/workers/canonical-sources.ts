@@ -10,6 +10,7 @@ export type CanonicalSourceId =
   | 'dgeg-apoios-energia'
   | 'adene-casa-mais'
   | 'portal-autarquico-dgal'
+  | 'dges-bolsas'
   | 'diario-republica';
 
 export type SourceCoverage =
@@ -129,6 +130,16 @@ const ENERGY_KEYWORDS = [
   'vale eficiência',
   'renewable energy',
   'energia renovável',
+] as const;
+
+// Keywords cidadão — educação (DGES)
+export const CIDADAO_EDUCACAO_KEYWORDS = [
+  'bolsa', 'bolsas', 'bolsa de estudo', 'bolsas de estudo',
+  'apoio', 'apoios', 'candidatura', 'candidaturas',
+  'propina', 'propinas', 'ação social escolar', 'acao social escolar',
+  'estudante', 'estudantes', 'ensino superior', '+superior',
+  'alojamento estudantil', 'residência universitária',
+  'scholarship', 'student support', 'higher education grant',
 ] as const;
 
 // Export category keywords for use in deep-crawler
@@ -309,6 +320,23 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     allowedHosts: ['portalautarquico.dgal.gov.pt', 'dgal.gov.pt'],
     requireApplicationIntent: true,
     discoveryPathHints: MUNICIPAL_DISCOVERY_PATHS,
+  },
+  'dges-bolsas': {
+    id: 'dges-bolsas',
+    name: 'DGES — Bolsas e Apoios ao Estudante',
+    entity: 'DGES',
+    description: 'Bolsas de estudo e apoios candidatáveis do ensino superior.',
+    coverage: 'NATIONAL',
+    sourceType: 'OTHER',
+    programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.EDUCATION,
+    seedUrls: [
+      'https://www.dges.gov.pt/pt/pagina/bolsas-de-estudo',
+    ],
+    keywords: CIDADAO_EDUCACAO_KEYWORDS,
+    allowedHosts: ['dges.gov.pt'],
+    requireApplicationIntent: true,
+    discoveryPathHints: ['/pagina/bols', '/apoios', '/candidatura'],
   },
   'diario-republica': {
     id: 'diario-republica',
