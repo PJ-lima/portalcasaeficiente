@@ -10,8 +10,6 @@ import { queueNewProgramNotifications } from '../lib/notifications';
 import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 import {
   crawlPageForDetails,
-  shouldBlockTitle,
-  isRelevantToEnergyEfficiency,
   type SupportProgramDetails,
   type SupportCategory
 } from './deep-crawler';

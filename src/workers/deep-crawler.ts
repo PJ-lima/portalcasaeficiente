@@ -578,19 +578,7 @@ export async function crawlPageForDetails(
     // Detect support category from all page content
     const fullText = $('main, .content, article, [role="main"]').first().text() || $('body').text();
     details.category = detectSupportCategory(pageTitle + ' ' + fullText);
-    
-    // Detect status from page content
-    const normalizedContent = normalizeText(fullText);
-    if (/\b(aberto|abertas?|em\s+curso|open|active)\b/.test(normalizedContent)) {
-      details.status = 'OPEN';
-    } else if (/\b(encerrad[oa]|fechad[oa]|terminad[oa]|closed|expired)\b/.test(normalizedContent)) {
-      details.status = 'CLOSED';
-    } else if (/\b(breve|previst[oa]|futur[oa]|a\s+abrir|coming\s+soon|planned)\b/.test(normalizedContent)) {
-      details.status = 'PLANNED';
-    } else {
-      details.status = 'UNKNOWN';
-    }
-    
+
     logger.success('Page crawled successfully', {
       url,
       sectionsFound: sections.length,
