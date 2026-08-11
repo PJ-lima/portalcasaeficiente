@@ -1,7 +1,7 @@
 import { CANONICAL_SOURCES } from '../src/workers/canonical-sources';
 import { isValidIngestSource } from '../src/workers/registry';
 
-const CITIZEN_IDS = ['dges-bolsas', 'iefp-apoios', 'seg-social-apoios'] as const;
+const CITIZEN_IDS = ['dges-bolsas', 'iefp-apoios'] as const; // SS: broken source — no public informational pages
 
 let failures = 0;
 function check(label: string, ok: boolean) {
