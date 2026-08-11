@@ -12,6 +12,7 @@ export type CanonicalSourceId =
   | 'portal-autarquico-dgal'
   | 'dges-bolsas'
   | 'iefp-apoios'
+  | 'seg-social-apoios'
   | 'diario-republica';
 
 export type SourceCoverage =
@@ -153,6 +154,16 @@ export const CIDADAO_EMPREGO_KEYWORDS = [
   'emprego', 'desemprego', 'empreendedorismo',
   'criação do próprio emprego', 'criacao do proprio emprego',
   'employment support', 'traineeship', 'hiring incentive',
+] as const;
+
+// Keywords cidadão — apoios sociais com requerimento (Segurança Social)
+export const CIDADAO_SOCIAL_KEYWORDS = [
+  'apoio', 'apoios', 'candidatura', 'candidaturas',
+  'requerimento', 'requerimentos', 'prestação', 'prestacao',
+  'subsídio', 'subsidio', 'subsídios', 'subsidios',
+  'complemento', 'prestação social', 'apoio social',
+  'parentalidade', 'deficiência', 'deficiencia', 'dependência', 'dependencia',
+  'social benefit application', 'allowance',
 ] as const;
 
 // Export category keywords for use in deep-crawler
@@ -367,6 +378,23 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     allowedHosts: ['iefp.pt'],
     requireApplicationIntent: true,
     discoveryPathHints: ['/apoios', '/medidas', '/incentivo', '/estagios', '/candidatura'],
+  },
+  'seg-social-apoios': {
+    id: 'seg-social-apoios',
+    name: 'Segurança Social — Apoios com Requerimento',
+    entity: 'Instituto da Segurança Social',
+    description: 'Apoios e prestações sociais com candidatura ou requerimento.',
+    coverage: 'NATIONAL',
+    sourceType: 'OTHER',
+    programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.SOCIAL,
+    seedUrls: [
+      'https://www.seg-social.pt/apoios-sociais-e-programas',
+    ],
+    keywords: CIDADAO_SOCIAL_KEYWORDS,
+    allowedHosts: ['seg-social.pt'],
+    requireApplicationIntent: true,
+    discoveryPathHints: ['/apoios', '/prestacoes', '/candidatura', '/requerimento'],
   },
   'diario-republica': {
     id: 'diario-republica',

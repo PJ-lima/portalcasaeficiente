@@ -35,6 +35,7 @@ export type DirectIngestSourceId =
   | 'adene-casa-mais'
   | 'dges-bolsas'
   | 'iefp-apoios'
+  | 'seg-social-apoios'
   | 'diario-republica'
   | 'municipios-portugal'
   | 'cascais';
@@ -116,6 +117,12 @@ const DIRECT_SOURCE_DESCRIPTORS: SourceDescriptor[] = [
     description: 'Medidas de emprego, estágios e formação com candidatura.',
   },
   {
+    id: 'seg-social-apoios',
+    name: 'Segurança Social — Apoios com Requerimento',
+    type: 'NATIONAL',
+    description: 'Apoios e prestações sociais com candidatura ou requerimento.',
+  },
+  {
     id: 'diario-republica',
     name: 'Diário da República',
     type: 'LEGAL_BACKSTOP',
@@ -166,6 +173,7 @@ const DIRECT_WORKERS: Record<DirectIngestSourceId, WorkerFn> = {
   'adene-casa-mais': () => ingestNationalSource('adene-casa-mais'),
   'dges-bolsas': () => ingestNationalSource('dges-bolsas'),
   'iefp-apoios': () => ingestNationalSource('iefp-apoios'),
+  'seg-social-apoios': () => ingestNationalSource('seg-social-apoios'),
   'diario-republica': ingestDiarioRepublica,
   'municipios-portugal': ingestMunicipalDiscovery,
   'cascais': ingestCascais,

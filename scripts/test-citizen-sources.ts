@@ -1,7 +1,7 @@
 import { CANONICAL_SOURCES } from '../src/workers/canonical-sources';
 import { isValidIngestSource } from '../src/workers/registry';
 
-const CITIZEN_IDS = ['dges-bolsas', 'iefp-apoios'] as const; // SS acrescenta-se na Task 5
+const CITIZEN_IDS = ['dges-bolsas', 'iefp-apoios', 'seg-social-apoios'] as const;
 
 let failures = 0;
 function check(label: string, ok: boolean) {
