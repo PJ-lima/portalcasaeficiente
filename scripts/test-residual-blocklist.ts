@@ -57,6 +57,32 @@ check('dges balcão incluies', { title: 'Balcão IncluiES', url: 'https://www.dg
 check('iefp inscrição para emprego', { title: 'Inscrição para Emprego', url: 'https://www.iefp.pt/inscricao-para-emprego' }, true);
 check('iefp aviso centros qualifica (financiamento institucional)', { title: 'Aviso para Apresentação de Candidaturas ao Apoio Concedido pelo IEFP, I.P., aos CENTROS QUALIFICA da Área Metropolitana de Lisboa', url: 'https://www.iefp.pt/aviso-para-apresentacao-de-candidaturas-ao-apoio-concedido-pelo-iefp-aos-centros-qualifica-da-area-metropolitana-de-lisboa' }, true);
 
+// === Padrões novos (RC4) — bloquear ===
+check('prefixo noticia com hifen', { title: 'Notícia - Procedimento Concursal Comum para contratação de trabalhadores' }, true);
+check('prorrogacao de prazo sem termo de apoio', { title: 'Prorrogação do prazo para apresentação de candidaturas ao procedimento' }, true);
+check('gabinete apoio emigrante', { title: 'Gabinete de Apoio ao Emigrante' }, true);
+check('apoio integracao migrantes', { title: 'Apoio à Integração de Migrantes' }, true);
+check('reuniao de camara', { title: 'Reunião de Câmara – Ata nº 12/2026' }, true);
+check('lista provisoria candidatos', { title: 'Lista Provisória de Candidatos Admitidos ao Procedimento' }, true);
+check('procedimento concursal singular', { title: 'Procedimento Concursal para Assistente Técnico' }, true);
+check('recrutamento de tecnico', { title: 'Recrutamento de Técnico Superior' }, true);
+check('designacao de presidente', { title: 'Designação do Novo Presidente da Junta de Freguesia' }, true);
+check('id numerico colado a nav', { title: '8451Câmara Municipal' }, true);
+check('prefixo de data por extenso', { title: '12 de março de 2026 Assembleia Municipal reunida em sessão ordinária' }, true);
+check('prefixo de data formato barreiro', { title: '5 mar 2026 · Notícia sobre trânsito condicionado' }, true);
+check('titulo e nome de ficheiro pdf', { title: 'Regulamento_2026_Versao_Final.pdf' }, true);
+check('titulo com mais de 500 caracteres', { title: 'Notícia: '.repeat(80) }, true);
+check('url reuniao de camara', { title: 'Ata', url: 'https://cm-x.pt/reunioes-de-camara/2026' }, true);
+check('url investidor servicos de apoio', { title: 'Serviços', url: 'https://portal.pt/investidor/servicos-de-apoio/financiamento' }, true);
+check('consulta publica sem termo de apoio (guard)', { title: 'Consulta Pública do Regulamento de Trânsito' }, true);
+
+// === NÃO pode bloquear (negativos, incluindo guard AID_EXCEPTION) ===
+check('regulamento de apoio a natalidade (nao bloquear)', { title: 'Regulamento de Apoio à Natalidade' }, false);
+check('consulta publica com termo de apoio (guard nao bloqueia)', { title: 'Consulta pública: Regulamento de Apoio ao Arrendamento Jovem' }, false);
+check('noticia de bolsas com termo de apoio (guard nao bloqueia)', { title: 'Notícia - Abertas candidaturas à Bolsa de Estudo Municipal para alunos do Ensino Superior' }, false);
+check('prorrogacao de prazo de bolsas (guard nao bloqueia)', { title: 'EDITAL | Prorrogação do prazo para apresentação de candidaturas a bolsas de estudo' }, false);
+check('candidaturas bolsas de estudo (nao bloquear)', { title: 'Candidaturas Bolsas de Estudo 2026/2027' }, false);
+
 // === NÃO pode bloquear (apoios genuínos do mesmo smoke) ===
 check('bolsa de estudo', { title: 'Bolsa de estudo', url: 'https://cm-corvo.pt/servicos/formularios/requerimentos-para-pedidos-de-apoio/bolsa-de-estudo/' }, false);
 check('apoio natalidade (requerimento concreto)', { title: 'Apoio à natalidade e infância', url: 'https://cm-corvo.pt/servicos/formularios/requerimentos-para-pedidos-de-apoio/apoio-a-natalidade/' }, false);

@@ -59,6 +59,9 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> =
   // beneficiary-gate não apanha porque o texto não usa os termos negativos
   // da lista (fala em "Centros Qualifica"/"ANQEP", não "empresa"/"entidades").
   { pattern: /iefp\.pt\/aviso-para-apresentacao-de-candidaturas.*centros-qualifica/, reason: 'url: iefp — financiamento a Centros Qualifica, não é apoio ao cidadão' },
+  { pattern: /\/investidor\/servicos-de-apoio\//, reason: 'url: portal investidor — serviços genéricos' },
+  { pattern: /\/noticia\/read\//, reason: 'url: página de notícia' },
+  { pattern: /\/reunioes-de-camara|reuniao-de-camara|reuniao-ordinaria/, reason: 'url: reunião de câmara' },
 ];
 
 /// Títulos (normalizados) de páginas de serviço/índice ou de conteúdo
@@ -78,6 +81,44 @@ const BLOCKED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }>
   { pattern: /^arquivo de noticias/, reason: 'titulo: arquivo de noticias' },
   { pattern: /procedimentos concursais|carreira e categoria de assistente/, reason: 'titulo: recrutamento' },
   { pattern: /^atendimento ao publico\b/, reason: 'titulo: servico de atendimento' },
+  { pattern: /gabinete de apoio ao emigrante/, reason: 'titulo: gabinete de apoio ao emigrante' },
+  { pattern: /apoio a integracao de i?migrantes/, reason: 'titulo: apoio a integracao de migrantes/imigrantes' },
+  { pattern: /reuniao(?:es)? de camara/, reason: 'titulo: reuniao de camara' },
+  { pattern: /lista (provisoria|definitiva|classificativa)/, reason: 'titulo: lista de candidatos' },
+  { pattern: /procedimento concursal/, reason: 'titulo: procedimento concursal' },
+  { pattern: /recrutamento de/, reason: 'titulo: recrutamento' },
+  { pattern: /bolsa de emprego/, reason: 'titulo: bolsa de emprego (oferta, nao apoio)' },
+  { pattern: /designacao d|nomeacao d/, reason: 'titulo: designacao/nomeacao de cargo' },
+  { pattern: /apoio ao movimento associativo/, reason: 'titulo: apoio ao movimento associativo' },
+  { pattern: /apoio as associacoes e coletividades/, reason: 'titulo: apoio as associacoes e coletividades' },
+  { pattern: /apoio as instituicoes particulares de solidariedade social/, reason: 'titulo: apoio as ipss' },
+  { pattern: /venda de lotes de terreno|alienacao de lotes/, reason: 'titulo: venda/alienacao de lotes' },
+  { pattern: /newsletter/, reason: 'titulo: newsletter' },
+  { pattern: /livro de reclamacoes/, reason: 'titulo: livro de reclamacoes' },
+  { pattern: /\[\+\] leia mais|\[\+\] noticias/, reason: 'titulo: bloco de listagem de noticias' },
+  { pattern: /\[download de documento\]|\[visitar website\]/, reason: 'titulo: link de documento/website' },
+  { pattern: /^\d{3,6}[a-zà-ÿ]/i, reason: 'titulo: id numerico colado a texto de navegacao' },
+  {
+    pattern: /^\d{1,2} de (janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de \d{4}\s/i,
+    reason: 'titulo: prefixo de data de noticia',
+  },
+  { pattern: /^\d{1,2} (jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez) \d{4}\s*·/i, reason: 'titulo: prefixo de data (formato barreiro)' },
+  { pattern: /_\d{4}.*\.pdf$/i, reason: 'titulo: nome de ficheiro pdf' },
+];
+
+/// Regex de título guardadas por AID_EXCEPTION: só bloqueiam quando o título
+/// NÃO contém termo de apoio (ver AID_EXCEPTION abaixo) — ex. "Consulta
+/// Pública: Regulamento de Apoio ao Arrendamento Jovem" tem de passar.
+const AID_GUARDED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> = [
+  { pattern: /^consulta publica/, reason: 'titulo: consulta publica' },
+  { pattern: /^periodo de consulta publica/, reason: 'titulo: periodo de consulta publica' },
+  { pattern: /^inicio do procedimento/, reason: 'titulo: inicio de procedimento' },
+  { pattern: /^procedimento regulamentar/, reason: 'titulo: procedimento regulamentar' },
+  { pattern: /^procedimento e participacao procedimental/, reason: 'titulo: procedimento e participacao procedimental' },
+  { pattern: /^publicitacao de inicio de procedimento/, reason: 'titulo: publicitacao de inicio de procedimento' },
+  { pattern: /^retificacao do regulamento/, reason: 'titulo: retificacao do regulamento' },
+  { pattern: /noticia - /, reason: 'titulo: prefixo de noticia' },
+  { pattern: /prorrogacao do prazo para apresentacao de candidaturas/, reason: 'titulo: prorrogacao de prazo (aviso, nao pagina do apoio)' },
 ];
 
 /// Páginas de navegação institucional — bloqueio por título EXATO (curto),
@@ -124,6 +165,14 @@ export function checkResidual(input: ResidualCheckInput): ResidualCheckResult {
   const title = normalizeText(input.title ?? '');
   for (const { pattern, reason } of BLOCKED_TITLE_PATTERNS) {
     if (pattern.test(title)) return { blocked: true, reason };
+  }
+
+  if (title.length > 500) {
+    return { blocked: true, reason: 'titulo: artigo de noticia colado no titulo' };
+  }
+
+  for (const { pattern, reason } of AID_GUARDED_TITLE_PATTERNS) {
+    if (pattern.test(title) && !AID_EXCEPTION.test(title)) return { blocked: true, reason };
   }
 
   if (BLOCKED_EXACT_TITLES.has(title)) {
