@@ -53,6 +53,12 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> =
   // o portal de acesso aos serviços (registo de desempregado), não um apoio
   // candidatável em si — mesmo padrão do "acesso-superior-candidatura" do DGES.
   { pattern: /iefp\.pt\/inscricao-para-emprego\b/, reason: 'url: iefp — inscrição de serviço, não é apoio' },
+  // IEFP: avisos de concurso para financiamento de Centros Qualifica (RC1 —
+  // decisão de âmbito 2026-08-10) são candidatáveis, mas o dinheiro vai para
+  // a entidade (Centro Qualifica), não para o cidadão diretamente. O
+  // beneficiary-gate não apanha porque o texto não usa os termos negativos
+  // da lista (fala em "Centros Qualifica"/"ANQEP", não "empresa"/"entidades").
+  { pattern: /iefp\.pt\/aviso-para-apresentacao-de-candidaturas.*centros-qualifica/, reason: 'url: iefp — financiamento a Centros Qualifica, não é apoio ao cidadão' },
 ];
 
 /// Títulos (normalizados) de páginas de serviço/índice ou de conteúdo
