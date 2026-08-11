@@ -11,6 +11,7 @@ export type CanonicalSourceId =
   | 'adene-casa-mais'
   | 'portal-autarquico-dgal'
   | 'dges-bolsas'
+  | 'iefp-apoios'
   | 'diario-republica';
 
 export type SourceCoverage =
@@ -140,6 +141,18 @@ export const CIDADAO_EDUCACAO_KEYWORDS = [
   'estudante', 'estudantes', 'ensino superior', '+superior',
   'alojamento estudantil', 'residência universitária',
   'scholarship', 'student support', 'higher education grant',
+] as const;
+
+// Keywords cidadão — emprego e formação (IEFP)
+export const CIDADAO_EMPREGO_KEYWORDS = [
+  'apoio', 'apoios', 'candidatura', 'candidaturas',
+  'incentivo', 'incentivos', 'medida', 'medidas',
+  'estágio', 'estágios', 'estagio', 'estagios',
+  'formação', 'formacao', 'qualificação', 'qualificacao',
+  'contratação', 'contratacao', 'apoio à contratação',
+  'emprego', 'desemprego', 'empreendedorismo',
+  'criação do próprio emprego', 'criacao do proprio emprego',
+  'employment support', 'traineeship', 'hiring incentive',
 ] as const;
 
 // Export category keywords for use in deep-crawler
@@ -337,6 +350,23 @@ export const CANONICAL_SOURCES: Record<CanonicalSourceId, CanonicalSourceDefinit
     allowedHosts: ['dges.gov.pt'],
     requireApplicationIntent: true,
     discoveryPathHints: ['/pagina/bols', '/apoios', '/candidatura'],
+  },
+  'iefp-apoios': {
+    id: 'iefp-apoios',
+    name: 'IEFP — Apoios e Incentivos',
+    entity: 'IEFP',
+    description: 'Medidas de emprego, estágios e formação com candidatura.',
+    coverage: 'NATIONAL',
+    sourceType: 'OTHER',
+    programType: ProgramType.NATIONAL,
+    domain: ProgramDomain.EMPLOYMENT,
+    seedUrls: [
+      'https://www.iefp.pt/apoios',
+    ],
+    keywords: CIDADAO_EMPREGO_KEYWORDS,
+    allowedHosts: ['iefp.pt'],
+    requireApplicationIntent: true,
+    discoveryPathHints: ['/apoios', '/medidas', '/incentivo', '/estagios', '/candidatura'],
   },
   'diario-republica': {
     id: 'diario-republica',
