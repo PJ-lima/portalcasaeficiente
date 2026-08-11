@@ -34,7 +34,7 @@ export interface BeneficiaryGateResult {
   matchedPositive: string[];
   matchedNegative: string[];
   /// Camada de texto que decidiu o veredicto ('none' = sem texto utilizável).
-  scope: 'targeted' | 'full' | 'none';
+  scope: 'targeted' | 'title' | 'full' | 'none';
 }
 
 const STRONG_POSITIVE = [
@@ -82,11 +82,21 @@ const STRONG_NEGATIVE = [
   'entidades gestoras',
   'autarquias locais',
   'entidades empregadoras',
-  // Vocabulário de aviso P2030 que aparece logo no TÍTULO ("Investimento
-  // Empresarial Produtivo", "TeSP – Entidades Públicas") — inequívoco mesmo
-  // sem texto enriquecido, o que importa quando o deep crawl falha.
+] as const;
+
+/// Keywords que só decidem quando aparecem no TÍTULO do candidato.
+/// "Investimento Empresarial Produtivo" ou "TeSP – Entidades Públicas" no
+/// título é org-aid inequívoco mesmo sem texto enriquecido. Mas NUNCA no
+/// full-scan: o menu/rodapé de um site municipal tem links como "Apoios a
+/// projectos empresariais" em todas as páginas — no full-scan estas keywords
+/// matariam qualquer apoio do mesmo site (aconteceu: Corvo, natalidade e
+/// bolsas excluídos pelo rodapé). Plural listado à parte: findMatches usa \b.
+const TITLE_NEGATIVE = [
   'empresarial',
+  'empresariais',
   'entidades publicas',
+  // Apoio ao associativismo = dinheiro para associações, nunca para o cidadão.
+  'associativismo',
 ] as const;
 
 const TARGETED_NEGATIVE = [
@@ -170,6 +180,17 @@ export function classifyBeneficiary(input: BeneficiaryGateInput): BeneficiaryGat
     }
     if (negative.length > 0) {
       return { verdict: 'ORGANIZATION', matchedPositive: positive, matchedNegative: negative, scope: 'targeted' };
+    }
+  }
+
+  // Camada título: org-aid que se denuncia no próprio nome, decisiva mesmo
+  // sem texto enriquecido. Corre depois da targeted (positivo explícito em
+  // secção de beneficiários continua a ganhar).
+  const titleText = normalizeText(input.title ?? '');
+  if (titleText.length > 0) {
+    const titleNegative = findMatches(titleText, TITLE_NEGATIVE);
+    if (titleNegative.length > 0) {
+      return { verdict: 'ORGANIZATION', matchedPositive: [], matchedNegative: titleNegative, scope: 'title' };
     }
   }
 

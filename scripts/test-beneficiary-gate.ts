@@ -139,6 +139,49 @@ check(
   'INDIVIDUAL',
 );
 
+// Título org-aid P2030 decide sem texto enriquecido (camada title).
+check(
+  'título empresarial decide ORGANIZATION',
+  { title: 'SICE – Investimento Empresarial Produtivo (Sector da Defesa).' },
+  'ORGANIZATION',
+);
+check(
+  'título entidades públicas decide ORGANIZATION',
+  { title: 'Cursos TeSP – Entidades Públicas – Ciclo 2026/2027' },
+  'ORGANIZATION',
+);
+check(
+  'título associativismo decide ORGANIZATION',
+  { title: 'Programa de Apoio ao Associativismo Desportivo do Faial (PADEF)' },
+  'ORGANIZATION',
+);
+
+// "empresariais" no rodapé/nav (rawSections) NÃO pode matar apoio de cidadão
+// do mesmo site (caso real: Corvo, natalidade excluída pelo menu).
+check(
+  'rodapé com apoios empresariais não exclui natalidade',
+  {
+    title: 'Apoio à natalidade e infância',
+    rawSections: {
+      'Menu': 'Apoios a projectos empresariais Bolsa de estudo Apoio municipal',
+    },
+  },
+  'UNKNOWN',
+);
+
+// E com secção de beneficiários clara, decide INDIVIDUAL apesar do rodapé.
+check(
+  'secção beneficiários vence rodapé empresarial',
+  {
+    title: 'Apoio à natalidade e infância',
+    beneficiaries: 'Famílias residentes no concelho com filhos até aos 3 anos.',
+    rawSections: {
+      'Menu': 'Apoios a projectos empresariais Bolsa de estudo',
+    },
+  },
+  'INDIVIDUAL',
+);
+
 if (failures > 0) {
   console.error(`\n${failures} teste(s) falhado(s).`);
   process.exit(1);

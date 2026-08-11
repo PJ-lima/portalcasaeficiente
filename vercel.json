@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/ingest?source=all",
+      "path": "/api/cron/ingest?source=core-nacional",
       "schedule": "0 6 * * *"
     },
     {

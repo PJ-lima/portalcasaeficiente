@@ -428,9 +428,12 @@ async function persistCandidate(params: {
   }
 
   // Blocklist do residual (RC3): listagens por categoria, formulários,
-  // editais de trânsito e afins nunca são programas — bloqueia a criação.
+  // editais de trânsito e afins nunca são programas — bloqueia SEMPRE,
+  // criação E update. O mesmo URL pode chegar duas vezes na mesma corrida
+  // com âncoras diferentes ("Regulamento X" e depois "Ler mais: Regulamento
+  // X") — se o update passasse, o título lixo sobrescrevia o limpo.
   const residual = checkResidual({ title: candidate.title, url: candidate.url });
-  if (residual.blocked && !existingByUrl?.programId) {
+  if (residual.blocked) {
     logger.info('Candidato excluído pela blocklist de residual', {
       title: candidate.title,
       url: candidate.url,
