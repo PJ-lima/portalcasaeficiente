@@ -149,6 +149,8 @@ const NATIONAL_DIRECT_IDS: DirectIngestSourceId[] = [
   'ifrru-reabilitacao',
   'dgeg-apoios-energia',
   'adene-casa-mais',
+  'dges-bolsas',
+  'iefp-apoios',
   'diario-republica',
 ];
 
