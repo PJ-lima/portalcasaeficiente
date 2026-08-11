@@ -5,7 +5,7 @@ import { prisma } from '../lib/prisma';
 import { slugify } from '../lib/utils';
 import type { CanonicalSourceDefinition } from './canonical-sources';
 import { calculateContentHash, normalizeText, WorkerLogger } from '../lib/worker-utils';
-import { withIngestionRun } from '../lib/ingestion';
+import { recordStatusChange, withIngestionRun } from '../lib/ingestion';
 import { queueNewProgramNotifications } from '../lib/notifications';
 import { CRAWLER_USER_AGENT } from '../lib/user-agent';
 import {
@@ -16,6 +16,7 @@ import {
   type SupportCategory
 } from './deep-crawler';
 import { classifyBeneficiary } from './beneficiary-gate';
+import { extractStatus } from './status-extractor';
 
 const MAX_PROGRAMS_PER_SOURCE = 250;
 
@@ -142,24 +143,6 @@ function toAbsoluteUrl(href: string, baseUrl: string): string | null {
   } catch {
     return null;
   }
-}
-
-function inferStatus(text: string): ProgramStatus {
-  const normalized = normalizeText(text);
-
-  if (/\b(aberto|abertas|abertura|em curso|submissoes abertas|submissões abertas)\b/.test(normalized)) {
-    return ProgramStatus.OPEN;
-  }
-
-  if (/\b(encerrado|encerradas|fechado|terminado|expirado)\b/.test(normalized)) {
-    return ProgramStatus.CLOSED;
-  }
-
-  if (/\b(breve|previsto|prevista|futuro|a abrir)\b/.test(normalized)) {
-    return ProgramStatus.PLANNED;
-  }
-
-  return ProgramStatus.UNKNOWN;
 }
 
 function normalizeHost(host: string): string {
@@ -414,8 +397,20 @@ async function persistCandidate(params: {
     }`,
   );
   const contentHash = calculateContentHash(normalizedPayload);
-  const status = inferStatus(`${candidate.title} ${candidate.description ?? ''}`);
   const now = new Date();
+  // Extração de estado (RC3): frases explícitas com proximidade + datas de
+  // prazo sobre deadline/rawSections — não só título+descrição, que quase
+  // nunca falam do estado das candidaturas.
+  const statusExtraction = extractStatus(
+    {
+      title: candidate.title,
+      description: candidate.description,
+      deadline: candidate.deadline,
+      rawSections: candidate.rawSections,
+    },
+    now,
+  );
+  const status = statusExtraction.status;
 
   const existingByUrl = await prisma.source.findFirst({
     where: { sourceUrl: candidate.url },
@@ -472,6 +467,10 @@ async function persistCandidate(params: {
       beneficiaryGate.scope === 'none'
         ? undefined
         : { ...beneficiaryGate, classifiedAt: now.toISOString() },
+    statusExtraction:
+      statusExtraction.sourceField === 'none'
+        ? undefined
+        : { ...statusExtraction, classifiedAt: now.toISOString() },
     ...(candidate.metadata ?? {}),
   };
 
@@ -498,11 +497,21 @@ async function persistCandidate(params: {
         title: candidate.title,
         summary: candidate.description?.slice(0, 3000) ?? null,
         entity,
-        status,
         officialUrl: candidate.url,
         programType,
       },
     });
+
+    // Estado via recordStatusChange (um só caminho de escrita: dedup +
+    // ProgramStatusEvent + notificações). UNKNOWN nunca sobrepõe um estado
+    // já conhecido — sem sinal não é sinal de mudança.
+    if (status !== ProgramStatus.UNKNOWN) {
+      await recordStatusChange(existingByUrl.programId, status, {
+        sourceUrl: candidate.url,
+        detectedBy: `worker:${source.id}`,
+        markVerified: true,
+      });
+    }
 
     await prisma.source.update({
       where: { id: existingByUrl.id },

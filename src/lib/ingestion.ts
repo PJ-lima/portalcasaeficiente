@@ -169,6 +169,12 @@ export type StatusChangeInput = {
   detectedBy?: string;
   /** Atualiza também `lastVerifiedAt` mesmo quando o estado não muda. */
   markVerified?: boolean;
+  /**
+   * Enfileira notificações da mudança (default true). Backfills em lote
+   * (ex.: scripts/extract-status.ts) passam false — sem isto, aplicar
+   * veredictos a dezenas de programas dispararia uma rajada de notificações.
+   */
+  notify?: boolean;
 };
 
 export type StatusChangeResult = {
@@ -243,10 +249,12 @@ export async function recordStatusChange(
 
   // Falhar a enfileirar não pode desfazer a deteção: o histórico é o registo
   // de verdade, a notificação é consequência.
-  try {
-    await queueStatusChangeNotifications(program);
-  } catch (error) {
-    console.error(`[ingestion] Falha ao enfileirar notificações de ${programId}:`, error);
+  if (input.notify !== false) {
+    try {
+      await queueStatusChangeNotifications(program);
+    } catch (error) {
+      console.error(`[ingestion] Falha ao enfileirar notificações de ${programId}:`, error);
+    }
   }
 
   return { changed: true, previousStatus, status };
