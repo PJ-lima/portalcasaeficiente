@@ -81,6 +81,14 @@ check('regulamento de apoio a natalidade (nao bloquear)', { title: 'Regulamento 
 check('consulta publica com termo de apoio (guard nao bloqueia)', { title: 'Consulta pública: Regulamento de Apoio ao Arrendamento Jovem' }, false);
 check('noticia de bolsas com termo de apoio (guard nao bloqueia)', { title: 'Notícia - Abertas candidaturas à Bolsa de Estudo Municipal para alunos do Ensino Superior' }, false);
 check('prorrogacao de prazo de bolsas (guard nao bloqueia)', { title: 'EDITAL | Prorrogação do prazo para apresentação de candidaturas a bolsas de estudo' }, false);
+check('id numerico colado com termo de apoio (guard nao bloqueia)', { title: '5874Regulamento de Habitação Social do Município de Pedrógão Grande' }, false);
+check('consulta publica habitacoes plural (guard nao bloqueia)', { title: 'Consulta Pública da Proposta de Regulamento Municipal de Atribuição e Gestão das Habitações em Regime de Renda Apoiada' }, false);
+check('consulta publica cabaz bebe (guard nao bloqueia)', { title: 'Consulta Pública do Projeto de Regulamento de Atribuição do Cabaz Bebé Feliz' }, false);
+check('titulo longo com termo de apoio (guard nao bloqueia)', { title: 'Candidaturas às Bolsas de Estudo Universitárias abrem a 20 de julho. '.repeat(10) }, false);
+check('titulo com markup html', { title: '<img loading="lazy" width="531" src="https://cm-x.pt/apoio-social.jpg">' }, true);
+check('url noticia com bolsa no titulo (guard nao bloqueia)', { title: 'Notícia - Abertas candidaturas à Bolsa de Estudo Municipal', url: 'http://cm-saoroquedopico.pt/noticia/read/1501/abertas' }, false);
+check('url noticia sem termo de apoio', { title: 'Notícia - Festival de Verão anima vila', url: 'http://cm-saoroquedopico.pt/noticia/read/1502/festival' }, true);
+check('prefixo data com omt (guard nao bloqueia)', { title: '04 de Maio de 2026 Município abre candidaturas para Programa de Ocupação Municipal Temporária de Jovens' }, false);
 check('candidaturas bolsas de estudo (nao bloquear)', { title: 'Candidaturas Bolsas de Estudo 2026/2027' }, false);
 
 // === NÃO pode bloquear (apoios genuínos do mesmo smoke) ===

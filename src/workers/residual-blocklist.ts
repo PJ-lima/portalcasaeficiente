@@ -23,7 +23,7 @@ export interface ResidualCheckResult {
 }
 
 /// URLs de listagem/serviço — nunca são a página de um apoio concreto.
-const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> = [
+const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string; aidGuarded?: boolean }> = [
   { pattern: /\/category\//, reason: 'url: listagem por categoria' },
   { pattern: /\/tag\//, reason: 'url: listagem por tag' },
   { pattern: /\/page\/\d+/, reason: 'url: paginação' },
@@ -60,7 +60,9 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }> =
   // da lista (fala em "Centros Qualifica"/"ANQEP", não "empresa"/"entidades").
   { pattern: /iefp\.pt\/aviso-para-apresentacao-de-candidaturas.*centros-qualifica/, reason: 'url: iefp — financiamento a Centros Qualifica, não é apoio ao cidadão' },
   { pattern: /\/investidor\/servicos-de-apoio\//, reason: 'url: portal investidor — serviços genéricos' },
-  { pattern: /\/noticia\/read\//, reason: 'url: página de notícia' },
+  // Página de notícia pode ser o único registo de um apoio real (bolsas de
+  // São Roque do Pico) — só bloqueia quando o título não fala de apoio.
+  { pattern: /\/noticia\/read\//, reason: 'url: página de notícia', aidGuarded: true },
   { pattern: /\/reunioes-de-camara|reuniao-de-camara|reuniao-ordinaria/, reason: 'url: reunião de câmara' },
 ];
 
@@ -97,12 +99,7 @@ const BLOCKED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }>
   { pattern: /livro de reclamacoes/, reason: 'titulo: livro de reclamacoes' },
   { pattern: /\[\+\] leia mais|\[\+\] noticias/, reason: 'titulo: bloco de listagem de noticias' },
   { pattern: /\[download de documento\]|\[visitar website\]/, reason: 'titulo: link de documento/website' },
-  { pattern: /^\d{3,6}[a-zà-ÿ]/i, reason: 'titulo: id numerico colado a texto de navegacao' },
-  {
-    pattern: /^\d{1,2} de (janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de \d{4}\s/i,
-    reason: 'titulo: prefixo de data de noticia',
-  },
-  { pattern: /^\d{1,2} (jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez) \d{4}\s*·/i, reason: 'titulo: prefixo de data (formato barreiro)' },
+  { pattern: /^</, reason: 'titulo: markup html' },
   { pattern: /_\d{4}.*\.pdf$/i, reason: 'titulo: nome de ficheiro pdf' },
 ];
 
@@ -119,6 +116,12 @@ const AID_GUARDED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: strin
   { pattern: /^retificacao do regulamento/, reason: 'titulo: retificacao do regulamento' },
   { pattern: /noticia - /, reason: 'titulo: prefixo de noticia' },
   { pattern: /prorrogacao do prazo para apresentacao de candidaturas/, reason: 'titulo: prorrogacao de prazo (aviso, nao pagina do apoio)' },
+  { pattern: /^\d{3,6}[a-zà-ÿ]/i, reason: 'titulo: id numerico colado a texto de navegacao' },
+  {
+    pattern: /^\d{1,2} de (janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro) de \d{4}\s/i,
+    reason: 'titulo: prefixo de data de noticia',
+  },
+  { pattern: /^\d{1,2} (jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez) \d{4}\s*·/i, reason: 'titulo: prefixo de data (formato barreiro)' },
 ];
 
 /// Páginas de navegação institucional — bloqueio por título EXATO (curto),
@@ -154,20 +157,19 @@ const BLOCKED_EXACT_TITLES = new Set(
 /// municípios pequenos e têm de entrar.
 const ADMIN_DOC_TITLE = /^(regulamento|codigo|tarifario|normas?|conduta|plano de gestao)\b/;
 const AID_EXCEPTION =
-  /apoio|bolsa|subsidio|incentivo|natalidade|habitacao|arrendamento|comparticipacao|beneficio/;
+  /apoio|bolsa|subsidio|incentivo|natalidade|habitac|arrendamento|comparticipacao|beneficio|cabaz|ocupacao municipal temporaria|cartao (social|jovem|senior|(do )?idoso|(do )?municipe)/;
 
 export function checkResidual(input: ResidualCheckInput): ResidualCheckResult {
   const url = input.url ?? '';
-  for (const { pattern, reason } of BLOCKED_URL_PATTERNS) {
-    if (pattern.test(url)) return { blocked: true, reason };
-  }
-
   const title = normalizeText(input.title ?? '');
+  for (const { pattern, reason, aidGuarded } of BLOCKED_URL_PATTERNS) {
+    if (pattern.test(url) && !(aidGuarded && AID_EXCEPTION.test(title))) return { blocked: true, reason };
+  }
   for (const { pattern, reason } of BLOCKED_TITLE_PATTERNS) {
     if (pattern.test(title)) return { blocked: true, reason };
   }
 
-  if (title.length > 500) {
+  if (title.length > 500 && !AID_EXCEPTION.test(title)) {
     return { blocked: true, reason: 'titulo: artigo de noticia colado no titulo' };
   }
 
