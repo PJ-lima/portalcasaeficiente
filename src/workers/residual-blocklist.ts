@@ -151,6 +151,16 @@ const BLOCKED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }>
   // sempre de "apoio" e continuaria a passar.
   { pattern: /proposta de alteracao (a|ao)\b/, reason: 'titulo: proposta de alteracao de regulamento/taxas (fase procedimental)' },
   { pattern: /^alteracoes a tabela de taxas/, reason: 'titulo: alteracao de tabela de taxas' },
+  // RC7 (revisão dos procedimentais, 2026-08-12): "Proposta de N.ª Alteração
+  // Ao Regulamento" sem tema nenhum no título — nem se sabe de que regulamento
+  // é; inútil sempre. Só casa quando o título ACABA logo a seguir a
+  // "regulamento" (+ data): com tema a seguir ("...ao Regulamento de Apoio à
+  // Natalidade") não casa. Decisão da mesma revisão: procedimentais COM tema
+  // ficam fora da blocklist — quando recentes são sinal legítimo de PLANNED.
+  {
+    pattern: /proposta de \d+\.?\s?a alteracao ao regulamento[\s\d/.–-]*$/,
+    reason: 'titulo: proposta de alteracao sem tema no titulo',
+  },
 ];
 
 /// Regex de título guardadas por AID_EXCEPTION: só bloqueiam quando o título
