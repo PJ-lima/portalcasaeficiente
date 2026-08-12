@@ -255,6 +255,10 @@ enum ProgramStatus {
   /// Candidaturas aceites mas sem verba: o caso Vale Eficiência (fev-2026),
   /// em que 28 mil candidaturas elegíveis ficaram sem apoio.
   EXHAUSTED
+  /// Apoio contínuo previsto em regulamento em vigor, sem prazo de
+  /// candidatura — o caso típico dos regulamentos municipais (cartões,
+  /// bolsas, natalidade) que aceitam pedidos todo o ano.
+  PERMANENT
   SUSPENDED
   CANCELLED
   /// Aberto ou fechado, mas com pagamentos em atraso reportados.

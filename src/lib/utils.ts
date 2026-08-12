@@ -111,6 +111,7 @@ export const programStatusLabels: Record<string, string> = {
   CLOSED: 'Fechado',
   PLANNED: 'A anunciar',
   UNKNOWN: 'Sem data pública',
+  PERMANENT: 'Sem prazo (permanente)',
   EXHAUSTED: 'Dotação esgotada',
   SUSPENDED: 'Suspenso',
   CANCELLED: 'Cancelado',
@@ -130,6 +131,8 @@ export const programStatusExplanations: Record<string, string> = {
   CLOSED: 'O prazo de candidaturas terminou.',
   PLANNED: 'Já foi anunciado, mas ainda não abriu candidaturas.',
   UNKNOWN: 'Não há informação pública fiável sobre o estado.',
+  PERMANENT:
+    'Apoio contínuo previsto em regulamento em vigor: não há prazo de candidatura, pode pedir em qualquer altura.',
   EXHAUSTED:
     'A verba já está toda comprometida. Ser considerado elegível não garante receber apoio.',
   SUSPENDED: 'Está temporariamente parado.',
@@ -143,6 +146,7 @@ export const programStatusColors: Record<string, string> = {
   CLOSED: 'bg-red-100 text-red-800',
   PLANNED: 'bg-amber-100 text-amber-800',
   UNKNOWN: 'bg-slate-100 text-slate-700',
+  PERMANENT: 'bg-teal-100 text-teal-800',
   EXHAUSTED: 'bg-orange-100 text-orange-800',
   SUSPENDED: 'bg-yellow-100 text-yellow-800',
   CANCELLED: 'bg-red-100 text-red-900',

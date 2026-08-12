@@ -21,6 +21,7 @@ interface ProgramFiltersProps {
 
 const STATUS_OPTIONS = [
   { value: 'OPEN', label: 'Aberto' },
+  { value: 'PERMANENT', label: 'Sem prazo (permanente)' },
   { value: 'PLANNED', label: 'A anunciar' },
   { value: 'UNKNOWN', label: 'Sem data pública' },
   { value: 'CLOSED', label: 'Fechado' },
