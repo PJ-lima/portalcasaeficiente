@@ -60,6 +60,22 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string; aid
   // da lista (fala em "Centros Qualifica"/"ANQEP", não "empresa"/"entidades").
   { pattern: /iefp\.pt\/aviso-para-apresentacao-de-candidaturas.*centros-qualifica/, reason: 'url: iefp — financiamento a Centros Qualifica, não é apoio ao cidadão' },
   { pattern: /\/investidor\/servicos-de-apoio\//, reason: 'url: portal investidor — serviços genéricos' },
+  // RC5 (revisão manual dos duvidosos, 2026-08-12): purgados à mão sem padrão
+  // generalizável — bloqueio explícito para a próxima corrida não os recriar.
+  { pattern: /mun-trofa\.pt\/1057\/via-azul/, reason: 'url: trofa — balcão viazul para empresários/investidores' },
+  { pattern: /cm-mora\.pt\/wp-content\/uploads\/2020\/10\/aviso-procedimento-regulamentar\.pdf/, reason: 'url: mora — procedimento regulamentar, programa ainda não existe' },
+  { pattern: /cm-pombal\.pt\/.*\/noticias\/noticia\/candidaturas-a-linha-pombal-apoia/, reason: 'url: pombal — notícia de prazo, não é a página do apoio' },
+  { pattern: /cm-vilavicosa\.pt\/wp-content\/uploads\/2022\/10\/edital_66_2022\.pdf/, reason: 'url: vila viçosa — projeto de regulamento de benefícios fiscais, beneficiário incerto' },
+  { pattern: /cm-crato\.pt\/candidaturas\b/, reason: 'url: crato — listagem de candidaturas' },
+  { pattern: /cm-crato\.pt\/wp-content\/uploads\/.*femre_artigo/, reason: 'url: crato — artigo femre, não é apoio' },
+  { pattern: /programas\.juventude\.gov\.pt\/florestas/, reason: 'url: plataforma externa sem detalhe do apoio' },
+  { pattern: /valpacos\.pt\/.*norte-2020-concursos/, reason: 'url: valpaços — concursos norte2020, não é apoio ao cidadão' },
+  { pattern: /municipio-portodemos\.pt\/pages\/980\b/, reason: 'url: porto de mós — listagem candidaturas a apoios' },
+  { pattern: /\/municipio\/documentacao\b/, reason: 'url: listagem de documentação municipal' },
+  // Página de eventos/registo de editais pode, raramente, ser o único registo
+  // de um apoio real — só bloqueia quando o título não fala de apoio.
+  { pattern: /\/eventos\//, reason: 'url: página de eventos', aidGuarded: true },
+  { pattern: /\/editais\//i, reason: 'url: listagem/registo de editais', aidGuarded: true },
   // Página de notícia pode ser o único registo de um apoio real (bolsas de
   // São Roque do Pico) — só bloqueia quando o título não fala de apoio.
   { pattern: /\/noticia\/read\//, reason: 'url: página de notícia', aidGuarded: true },
@@ -93,7 +109,7 @@ const BLOCKED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }>
   { pattern: /designacao d|nomeacao d/, reason: 'titulo: designacao/nomeacao de cargo' },
   { pattern: /apoio ao movimento associativo/, reason: 'titulo: apoio ao movimento associativo' },
   { pattern: /apoio as associacoes e coletividades/, reason: 'titulo: apoio as associacoes e coletividades' },
-  { pattern: /apoio as instituicoes particulares de solidariedade social/, reason: 'titulo: apoio as ipss' },
+  { pattern: /apoio( financeiro)? as instituicoes particulares de solidariedade social/, reason: 'titulo: apoio as ipss' },
   { pattern: /venda de lotes de terreno|alienacao de lotes/, reason: 'titulo: venda/alienacao de lotes' },
   { pattern: /newsletter/, reason: 'titulo: newsletter' },
   { pattern: /livro de reclamacoes/, reason: 'titulo: livro de reclamacoes' },
@@ -101,6 +117,30 @@ const BLOCKED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }>
   { pattern: /\[download de documento\]|\[visitar website\]/, reason: 'titulo: link de documento/website' },
   { pattern: /^</, reason: 'titulo: markup html' },
   { pattern: /_\d{4}.*\.pdf$/i, reason: 'titulo: nome de ficheiro pdf' },
+  // RC5 (revisão manual dos duvidosos, 2026-08-12): anexos e formulários
+  // apanhados como páginas de programa — a ficha/boletim/declaração é sempre
+  // um anexo do apoio, nunca a página do apoio em si.
+  // Ancorado ao início: anexos têm título curto ("Bolsas – Formulário de
+  // Candidatura"); artigos de notícia colados no título usam a expressão a
+  // meio do texto e não podem ser apanhados.
+  {
+    pattern:
+      /^.{0,60}(ficha (de )?candidatura|boletim de candidatura|formulario de (candidatura|inscricao)|ficha de inscricao|ficha de criterios|declaracao de compromisso)/,
+    reason: 'titulo: anexo/formulario de candidatura',
+  },
+  { pattern: /^ficha de projeto\b/, reason: 'titulo: ficha de projeto (registo, nao apoio)' },
+  { pattern: /subsidios e apoios? (sociais )?pagos/, reason: 'titulo: lista de transparencia de subsidios pagos' },
+  { pattern: /listas? das? candidaturas aprovadas/, reason: 'titulo: lista de resultados' },
+  { pattern: /classificacao (provisoria|definitiva)/, reason: 'titulo: resultado de classificacao' },
+  { pattern: /\bpepal\b/, reason: 'titulo: pepal (estagios nas autarquias, nao apoio ao cidadao)' },
+  { pattern: /^area de reabilitacao urbana\b/, reason: 'titulo: aru (delimitacao urbanistica)' },
+  // Editais/avisos/regulamentos "nus": só numeração e datas, sem tema no título
+  // ("» Edital 15/2023", "Edital n.º 7 – 2020 27-01-2020", "» Regulamento").
+  {
+    pattern: /^\W*(edital|aviso|regulamento)(\s+interno)?\s*(n\.?\s*[ºo]?\s*)?\d*(\s*[/–-]\s*\d{2,4})*(\s+\d{2}-\d{2}-\d{4})?\s*$/,
+    reason: 'titulo: edital/aviso so com numeracao',
+  },
+  { pattern: /^\d{4}\.\d{2}\.\d{2}\s*[–-]\s*(edital|aviso)\b[^a-z]*$/, reason: 'titulo: edital/aviso datado sem tema' },
 ];
 
 /// Regex de título guardadas por AID_EXCEPTION: só bloqueiam quando o título
@@ -147,6 +187,7 @@ const BLOCKED_EXACT_TITLES = new Set(
     'protecao de dados',
     'servicos online',
     'contactos',
+    'inscricao download',
   ].map((title) => normalizeText(title)),
 );
 

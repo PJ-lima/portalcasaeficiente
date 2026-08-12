@@ -105,6 +105,48 @@ check('apoio atividade desportiva', { title: 'Apoio à atividade desportiva', ur
 check('dges candidatura online bolsas', { title: 'Candidatura Online - Bolsas de Estudo', url: 'https://www.dges.gov.pt/wwwBeOn/?plid=373' }, false);
 check('iefp aviso candidaturas medida emprego (não centros qualifica)', { title: 'Aviso para Apresentação de Candidaturas à Medida Estímulo Emprego', url: 'https://www.iefp.pt/aviso-para-apresentacao-de-candidaturas-a-medida-estimulo-emprego' }, false);
 
+// === RC5 (revisão manual dos duvidosos, 2026-08-12) — bloquear ===
+check('ficha de candidatura (anexo)', { title: 'Ficha de Candidatura', url: 'https://www.cm-pontedesor.pt/wp-content/uploads/ficha-de-candidatura-15.pdf' }, true);
+check('ficha candidatura sem "de" (gondomar)', { title: '2021.05.13 – Ficha Candidatura Ensino Público' }, true);
+check('boletim de candidatura', { title: 'Boletim de candidatura – Ensino Público' }, true);
+check('formulário de candidatura', { title: 'formulário de candidatura' }, true);
+check('formulário de inscrição', { title: 'Formulário de Inscrição' }, true);
+check('ficha de critérios', { title: '» Ficha de Critérios' }, true);
+check('declaração de compromisso', { title: '»» Declaração de Compromisso de Honra' }, true);
+check('inscrição download (sousel)', { title: 'Inscrição download' }, true);
+check('ficha de projeto (monchique)', { title: 'Ficha de Projeto: Medida SM1 Candidatura 12467 2706' }, true);
+check('transparência subsídios pagos (vila viçosa)', { title: 'Edital N.º 52/2020 – Subsídios e apoio pagos até 30 de junho 2020 21-07-2020' }, true);
+check('transparência subsídios sociais pagos', { title: 'Edital n.º 6/2017 – subsídios e apoios sociais pagos até 31 de dezembro de 2016 20-01-2017' }, true);
+check('lista de candidaturas aprovadas', { title: 'Aviso – Projeto de listas das candidaturas aprovadas' }, true);
+check('classificação provisória habitação', { title: 'Edital – Classificação Provisória de uma Habitação Tipologia T1 em Montargil' }, true);
+check('pepal', { title: 'Aviso – PEPAL 6ª Edição – 2ª Fase' }, true);
+check('aru', { title: 'Área de Reabilitação Urbana', url: 'https://angradoheroismo.pt/area-de-reabilitacao-urbana-aru-de-angra-do-heroismo/' }, true);
+check('edital nu com número', { title: '» Edital 15/2023' }, true);
+check('aviso nu com número', { title: '»» Aviso 28/2024' }, true);
+check('edital nu n.º colado', { title: 'Edital n.º49/2026' }, true);
+check('edital nu com data dupla', { title: 'Edital N.º 7 – 2020 27-01-2020' }, true);
+check('regulamento nu', { title: '» Regulamento' }, true);
+check('edital datado sem tema (gondomar)', { title: '2024.07.15 – Edital' }, true);
+check('apoio financeiro às ipss (crato)', { title: 'Projeto de Regulamento Municipal para Atribuição de Apoio Financeiro às Instituições Particulares de Solidariedade Social, destinado à Gratuidade da Frequência do Ensino Pré-Escolar' }, true);
+check('url eventos sem apoio no título', { title: 'Bora Lá Treinar+', url: 'https://cm-crato.pt/eventos/bora-la-treinar/' }, true);
+check('url editais sem apoio no título', { title: 'Edital número quarenta e nove', url: 'http://www.cm-ferreiradozezere.pt/mfz-municipio/camara-municipal/editais/4768-edital-n-o49-2026' }, true);
+check('url viazul (empresários)', { title: 'ViAzul Simplifica', url: 'https://mun-trofa.pt/1057/via-azul' }, true);
+check('url procedimento regulamentar mora', { title: 'Procedimento regulamentar para a elaboração e aprovação do regulamento do programa de recuperação de habitações degradadas 02-01-2020', url: 'https://www.cm-mora.pt/wp-content/uploads/2020/10/aviso-procedimento-regulamentar.pdf' }, true);
+check('url notícia de prazo pombal', { title: 'Candidate-se à linha de apoio: prazo alargado até 30 de julho!', url: 'https://www.cm-pombal.pt/municipio/comunicacao/noticias/noticia/candidaturas-a-linha-pombal-apoia-2-0-alargadas-ate-30-de-julho-candidate-se' }, true);
+check('url plataforma juventude florestas', { title: 'https://programas.juventude.gov.pt/florestas', url: 'https://programas.juventude.gov.pt/florestas' }, true);
+check('url norte2020 valpaços', { title: 'GPI - Concursos para Candidaturas', url: 'http://www.valpacos.pt/eu-sou-municipe/apoio-ao-cidadao/norte-2020-concursos-para-apresentacao-de-candidaturas' }, true);
+check('url documentação valongo', { title: 'Regulamento Municipal de Concessão de Apoios Desportivos', url: 'http://www.cm-valongo.pt/municipio/documentacao?folders_list_60_folder_id=1077' }, true);
+
+// === RC5 — NÃO pode bloquear (guards e apoios genuínos) ===
+check('edital com tema de apoio (não é nu)', { title: 'Edital 12/2026 – Apoio à Natalidade' }, false);
+check('aviso com tema (não é nu)', { title: 'Aviso 3/2026 – Candidaturas ao Cartão Sénior' }, false);
+check('url eventos com apoio no título (guard)', { title: 'Entrega de apoios às famílias', url: 'https://cm-x.pt/eventos/entrega-apoios/' }, false);
+check('url editais com bolsa no título (guard)', { title: 'Edital – Bolsas de Estudo 2026', url: 'https://cm-x.pt/editais/bolsas-2026' }, false);
+check('dinâmica jovem crato (mantido na revisão)', { title: 'Dinâmica Jovem 2026', url: 'https://cm-crato.pt/dinamica-jovem-2026/' }, false);
+check('candidatura habitação (título de apoio, não anexo)', { title: 'Candidatura à Habitação Pública Municipal' }, false);
+check('natalidade e ipss no mesmo regulamento (apoio ao cidadão)', { title: 'Regulamento de apoio à natalidade e às instituições particulares de solidariedade social 06-01-2021' }, false);
+check('artigo colado com "formulário de candidatura" a meio', { title: 'Candidaturas às Bolsas de Estudo Universitárias abrem a 20 de julho15 julho, 2026O Município informa que as candidaturas decorrem pela plataforma SIGA. Após a receção das credenciais, os candidatos deverão aceder à plataforma, preencher o formulário de candidatura e submeter o pedido.' }, false);
+
 if (failures > 0) {
   console.error(`\n${failures} teste(s) falhado(s).`);
   process.exit(1);
