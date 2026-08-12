@@ -72,6 +72,10 @@ const BLOCKED_URL_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string; aid
   { pattern: /valpacos\.pt\/.*norte-2020-concursos/, reason: 'url: valpaços — concursos norte2020, não é apoio ao cidadão' },
   { pattern: /municipio-portodemos\.pt\/pages\/980\b/, reason: 'url: porto de mós — listagem candidaturas a apoios' },
   { pattern: /\/municipio\/documentacao\b/, reason: 'url: listagem de documentação municipal' },
+  // RC6 (URLs mortos, 2026-08-12): docs legados do IFRRU 2020 (opencms/http)
+  // em 404 — programa encerrado para novas candidaturas, sem página substituta.
+  { pattern: /portaldahabitacao\.pt\/.*\/ifrru\//, reason: 'url: ifrru 2020 — docs legados de programa encerrado' },
+  { pattern: /cm-gaviao\.pt\/\?listas_ficheiros=projeto-de-regulamento-de-apoio-financeiro-aos-manuais-escolares/, reason: 'url: gavião — projeto de regulamento (draft), url morto' },
   // Página de eventos/registo de editais pode, raramente, ser o único registo
   // de um apoio real — só bloqueia quando o título não fala de apoio.
   { pattern: /\/eventos\//, reason: 'url: página de eventos', aidGuarded: true },
@@ -141,6 +145,12 @@ const BLOCKED_TITLE_PATTERNS: ReadonlyArray<{ pattern: RegExp; reason: string }>
     reason: 'titulo: edital/aviso so com numeracao',
   },
   { pattern: /^\d{4}\.\d{2}\.\d{2}\s*[–-]\s*(edital|aviso)\b[^a-z]*$/, reason: 'titulo: edital/aviso datado sem tema' },
+  // RC6 (URLs mortos Gavião, 2026-08-12): propostas de alteração de regulamento
+  // ou de tabela de taxas são fase procedimental — a página do apoio é o
+  // regulamento final, nunca a proposta. Sem guarda AID: o título fala quase
+  // sempre de "apoio" e continuaria a passar.
+  { pattern: /proposta de alteracao (a|ao)\b/, reason: 'titulo: proposta de alteracao de regulamento/taxas (fase procedimental)' },
+  { pattern: /^alteracoes a tabela de taxas/, reason: 'titulo: alteracao de tabela de taxas' },
 ];
 
 /// Regex de título guardadas por AID_EXCEPTION: só bloqueiam quando o título
